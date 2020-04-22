@@ -1,0 +1,1 @@
+Pasta para inclusão dos requisitos do sistema e histórias de usuário.

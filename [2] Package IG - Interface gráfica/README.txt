@@ -1,0 +1,1 @@
+Pasta para inclusão dos protótipos das telas do sistema.
