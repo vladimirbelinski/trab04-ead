@@ -1,16 +1,20 @@
 package br.com.utfpr.libraryfive.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "USUARIO", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(name = "USUARIO", uniqueConstraints = @UniqueConstraint(columnNames = "email"),
+        indexes = { @Index(name = "EMAIL_UNIQUE", columnList = "EMAIL", unique = true)})
 public class UserModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,20 +25,20 @@ public class UserModel implements Serializable {
     private Integer id;
 
     @NotNull
-    //@Max(200)
+    @Size(max = 200)
     @Column(name = "NOME")
     private String name;
 
     @NotNull
-    //@Max(60)
+    @Size(max = 60)
     @Email
     //@UniqueEmail
-    @Column(name = "EMAIL", nullable = false)
+    @Column(name = "EMAIL")
     private String email;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "TIPO_USUARIO", columnDefinition="ENUM('ALUNO','SERVIDOR')", nullable = false )
+    @Column(name = "TIPO_USUARIO", columnDefinition="ENUM('ALUNO','SERVIDOR')")
     private UserType userType;
 
     public enum UserType {
@@ -42,12 +46,12 @@ public class UserModel implements Serializable {
     }
 
     @NotNull
-    //@Max(100)
+    @Size(max = 100)
     @Column(name = "RUA")
     private String street;
 
     @NotNull
-    //@Max(100)
+    @Size(max = 100)
     @Column(name = "BAIRRO")
     private String neighborhood;
 
@@ -56,17 +60,17 @@ public class UserModel implements Serializable {
     private Integer streetNumber;
 
     @NotNull
-    //@Max(100)
+    @Size(max = 100)
     @Column(name = "COMPLEMENTO")
     private String additionalAddress;
 
     @NotNull
-    //@Max(100)
+    @Size(max = 100)
     @Column(name = "ESTADO")
     private String state;
 
     @NotNull
-    //@Max(200)
+    @Size(max = 200)
     @Column(name = "CIDADE")
     private String city;
 
@@ -77,7 +81,7 @@ public class UserModel implements Serializable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", columnDefinition="ENUM('ATIVO','INATIVO')", nullable = false )
+    @Column(name = "STATUS", columnDefinition="ENUM('ATIVO','INATIVO')")
     private UserStatus userStatus;
 
     public enum UserStatus {
@@ -85,7 +89,7 @@ public class UserModel implements Serializable {
     }
 
     @NotNull
-    //@Max(50)
+    @Size(max = 50)
     @Column(name = "SENHA")
     private String password;
 
@@ -96,15 +100,18 @@ public class UserModel implements Serializable {
 
     // relations
     // usuario 1:n usuario telefone
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<UserPhoneModel> userPhone;
 
     // usuario 1:n emprestimo
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<LoanModel> loan;
 
     // usuario 1:n reserva
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<ReserveModel> reserve;
 
     // getters and setters

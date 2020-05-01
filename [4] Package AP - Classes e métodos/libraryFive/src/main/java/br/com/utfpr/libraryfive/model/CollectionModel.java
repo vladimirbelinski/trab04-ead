@@ -1,7 +1,11 @@
 package br.com.utfpr.libraryfive.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,12 +17,12 @@ public class CollectionModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@Max(6)
+    @Size(max = 6)
     @Column(name = "ID_OBRA")
     private Integer id;
 
     @NotNull
-    //@Max(300)
+    @Size(max = 300)
     @Column(name = "TITULO")
     private String title;
 
@@ -28,7 +32,7 @@ public class CollectionModel implements Serializable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "TIPO_OBRA", columnDefinition="ENUM('Literatura','Tese/Monografia','Outros')", nullable = false )
+    @Column(name = "TIPO_OBRA", columnDefinition="ENUM('Literatura','Tese/Monografia','Outros')")
     private CollectionType collectionType;
 
     public enum CollectionType {
@@ -36,12 +40,14 @@ public class CollectionModel implements Serializable {
     }
 
     // relations
-    // obra 1:n autor
-    @OneToMany(mappedBy = "collection", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<AuthorModel> authorList;
+    // obra 1:n autor_obra
+    @OneToMany(mappedBy = "collection", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private List<AuthorCollectionModel> authorCollectionList;
 
     // obra 1:n exemplar
-    @OneToMany(mappedBy = "collection", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "collection", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<CollectionCopyModel> collectionCopyList;
 
     // getters and setters
@@ -77,12 +83,12 @@ public class CollectionModel implements Serializable {
         this.collectionType = collectionType;
     }
 
-    public List<AuthorModel> getAuthorList() {
-        return authorList;
+    public List<AuthorCollectionModel> getAuthorCollectionList() {
+        return authorCollectionList;
     }
 
-    public void setAuthorList(List<AuthorModel> authorList) {
-        this.authorList = authorList;
+    public void setAuthorCollectionList(List<AuthorCollectionModel> authorCollectionList) {
+        this.authorCollectionList = authorCollectionList;
     }
 
     public List<CollectionCopyModel> getCollectionCopyList() {

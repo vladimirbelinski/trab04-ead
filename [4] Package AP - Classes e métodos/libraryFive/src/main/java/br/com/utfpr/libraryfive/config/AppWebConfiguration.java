@@ -20,13 +20,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @EnableWebMvc
 // informa quais serão as classes à serem lidas
-@ComponentScan(basePackageClasses={AbstractController.class, CollectionController.class,
-        HomeController.class, LoginController.class,
-        AuthorModel.class, CollectionCopyModel.class, CollectionModel.class, LoanModel.class, ReserveModel.class,
-        ReturnModel.class, UserModel.class, UserPhoneModel.class,
-        CollectionService.class, UserService.class,
-        CollectionDao.class, UserDao.class,
-        UserPopulator.class})
+@ComponentScan(basePackages = "br.com.utfpr.libraryfive")
 public class AppWebConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean

@@ -4,23 +4,21 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "USUARIO_TELEFONE")
+@Table(name = "USUARIO_TELEFONE",
+        indexes = { @Index(name = "FK_TELEFONE_USUARIO_idx", columnList = "ID_USUARIO", unique = false)})
 public class UserPhoneModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@Max(11)
+    @NotNull
+    @Size(max = 11)
     @Column(name = "NUMERO_TELEFONE")
     private String phoneNumber;
-
-    @Id
-    @Column(name = "ID_USUARIO")
-    private Integer id;
 
     @NotNull
     @Type(type = "org.hibernate.type.NumericBooleanType")
@@ -28,8 +26,9 @@ public class UserPhoneModel implements Serializable {
     private Integer main;
 
     // relations
+    @Id
     @ManyToOne
-    @JoinColumn(name = "user", nullable = false)
+    @JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_TELEFONE_USUARIO"))
     private UserModel user;
 
     // getters and setters
@@ -39,14 +38,6 @@ public class UserPhoneModel implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Integer getMain() {

@@ -6,7 +6,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "DEVOLUCAO")
+@Table(name = "DEVOLUCAO",
+        indexes = { @Index(name = "FK_DEVOLUCAO_EMPRESTIMO_idx", columnList = "ID_EMPRESTIMO", unique = false)})
 public class ReturnModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,7 +25,7 @@ public class ReturnModel implements Serializable {
     // relations
     // devolucao n:1 emprestimo
     @ManyToOne
-    @JoinColumn(name = "ID_EMPRESTIMO", nullable = false)
+    @JoinColumn(name = "ID_EMPRESTIMO", foreignKey = @ForeignKey(name = "FK_DEVOLUCAO_EMPRESTIMO"))
     private LoanModel loan;
 
     // getters and setters

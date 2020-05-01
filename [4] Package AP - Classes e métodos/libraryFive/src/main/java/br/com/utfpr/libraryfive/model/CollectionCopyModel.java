@@ -1,5 +1,8 @@
 package br.com.utfpr.libraryfive.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -7,7 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "EXEMPLAR")
+@Table(name = "EXEMPLAR",
+        indexes = { @Index(name = "FK_EXEMPLAR_OBRA_idx", columnList = "ID_OBRA", unique = false)})
 public class CollectionCopyModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,7 +28,7 @@ public class CollectionCopyModel implements Serializable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "SITUACAO", columnDefinition="ENUM('Disponível','Emprestado','Devolvido','Reservado','Extraviado')", nullable = false)
+    @Column(name = "SITUACAO", columnDefinition="ENUM('Disponível','Emprestado','Devolvido','Reservado','Extraviado')")
     private CollectionCopySituation collectionCopySituation;
 
     public enum CollectionCopySituation {
@@ -34,15 +38,17 @@ public class CollectionCopyModel implements Serializable {
     // relations
     // exemplar n:1 obra
     @ManyToOne
-    @JoinColumn(name = "ID_OBRA",  nullable = false)
+    @JoinColumn(name = "ID_OBRA", foreignKey = @ForeignKey(name = "FK_EXEMPLAR_OBRA"))
     private CollectionModel collection;
 
     // exemplar 1:n emprestimo
-    @OneToMany(mappedBy = "collectionCopy", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "collectionCopy", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<LoanModel> loan;
 
     // exemplar 1:n reserva
-    @OneToMany(mappedBy = "collectionCopy", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "collectionCopy", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<ReserveModel> reserve;
 
     // getters and setters

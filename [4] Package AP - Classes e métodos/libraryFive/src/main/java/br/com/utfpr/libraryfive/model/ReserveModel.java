@@ -6,7 +6,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "RESERVA")
+@Table(name = "RESERVA",
+        indexes = { @Index(name = "FK_RESERVA_EXEMPLAR_idx", columnList = "ID_EXEMPLAR", unique = false),
+                    @Index(name = "FK_RESERVA_USUARIO_idx", columnList = "ID_USUARIO", unique = false)})
 public class ReserveModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,12 +26,12 @@ public class ReserveModel implements Serializable {
     // relations
     // reserva n:1 exemplar
     @ManyToOne
-    @JoinColumn(name = "ID_EXEMPLAR", nullable = false)
+    @JoinColumn(name = "ID_EXEMPLAR", foreignKey = @ForeignKey(name = "FK_RESERVA_EXEMPLAR"))
     private CollectionCopyModel collectionCopy;
 
     // reserva n:1 usuario
     @ManyToOne
-    @JoinColumn(name = "ID_USUARIO", nullable = false)
+    @JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_RESERVA_USUARIO"))
     private UserModel user;
 
     // getters and setters
