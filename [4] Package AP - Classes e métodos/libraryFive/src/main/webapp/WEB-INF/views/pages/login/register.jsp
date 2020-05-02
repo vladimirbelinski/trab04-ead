@@ -101,7 +101,7 @@
                 <form:label path="birthDate">Data de nascimento</form:label>
             </td>
             <td>
-                <form:input type="date" path="birthDate" name="birthDate" id="birthDate" />
+                <form:input type="text" placeholder="dd/MM/yyyy" path="birthDate" name="birthDate" id="birthDate" />
             </td>
         </tr>
         <tr>

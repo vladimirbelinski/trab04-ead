@@ -40,7 +40,7 @@
         <tr></tr>
         <tr>
             <td></td>
-            <td><a href="/LibraryFive_war_exploded/login/register">Doesn't have an account? Please, click here to register!</a>
+            <td><a href="/LibraryFive_war_exploded/register">Doesn't have an account? Please, click here to register!</a>
             </td>
         </tr>
     </table>

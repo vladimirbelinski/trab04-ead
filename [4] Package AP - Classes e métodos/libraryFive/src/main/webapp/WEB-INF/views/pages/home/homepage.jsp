@@ -22,7 +22,7 @@
 </br>
 </br>
 
-<form action="/logout">
+<form action="/LibraryFive_war_exploded/logout">
     <input type="submit" value="Logout"/>
 </form>
 
