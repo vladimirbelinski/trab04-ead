@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository("collectionDao")
 @Transactional
-public class DefaultCollectionDao implements CollectionDao {
+public class CollectionDaoImpl implements CollectionDao {
 
     @PersistenceContext
     private EntityManager entityManager;

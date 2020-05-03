@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service("collectionService")
 @Transactional
-public class DefaultCollectionService implements CollectionService {
+public class CollectionServiceImpl implements CollectionService {
 
     @Autowired
     private CollectionDao collectionDao;

@@ -2,13 +2,17 @@ package br.com.utfpr.libraryfive.controllers;
 
 import br.com.utfpr.libraryfive.service.UserService;
 import br.com.utfpr.libraryfive.model.UserModel;
-import br.com.utfpr.libraryfive.populator.UserPopulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -21,17 +25,18 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Controller
 @Transactional
-@RequestMapping("/")
 public class LoginController extends AbstractController {
 
     private static final String XXX = "/selecionar-perfil";
     private static final String FORM_GLOBAL_ERROR = "form.global.error";
-    private static final String REDIRECT_TO_REGISTER = REDIRECT_PREFIX + "/register";
+    private static final String REDIRECT_TO_SIGNUP = REDIRECT_PREFIX + "/signup";
     private static final String REDIRECT_TO_HOMEPAGE = REDIRECT_PREFIX + "/home";
     private static final String REDIRECT_TO_LOGIN = REDIRECT_PREFIX + "/login";
 
@@ -41,7 +46,7 @@ public class LoginController extends AbstractController {
     UserService userService;
 
     @Autowired
-    UserPopulator userPopulator;
+    private UserDetailsService userDetailsService;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -50,15 +55,10 @@ public class LoginController extends AbstractController {
                 dateFormat, false));
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String redirectPage() {
-        return REDIRECT_TO_LOGIN;
-    }
+    @RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
+    public ModelAndView showLogin() {
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView showLogin(HttpServletRequest request, HttpServletResponse response) {
-
-        ModelAndView modelAndView = new ModelAndView("login/loginPage");
+        ModelAndView modelAndView = new ModelAndView("login/login.html");
         modelAndView.addObject("user", new UserModel());
 
         return modelAndView;
@@ -80,57 +80,56 @@ public class LoginController extends AbstractController {
             return modelAndView;
         } else {
             LOG.info("User " + user.getEmail() + "doesn't exists, redirecting to login page...");
-            modelAndView = new ModelAndView("login/loginPage");
+            modelAndView = new ModelAndView("login/login.html");
         }
         return modelAndView;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView showRegister(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/signup", method = RequestMethod.GET)
+    public ModelAndView showSignup() {
 
-        ModelAndView modelAndView = new ModelAndView("login/register");
+        ModelAndView modelAndView = new ModelAndView("login/signup.html");
         modelAndView.addObject("user", new UserModel());
 
         return modelAndView;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView doRegister(HttpServletRequest request, HttpServletResponse response,
-                                   final UserModel user, BindingResult result) {
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    public ModelAndView doSignup(@Valid UserModel user, BindingResult bindingResult) {
 
-        ModelAndView modelAndView = null;
+        ModelAndView modelAndView = new ModelAndView();
 
-        if (user.getEmail().contains("@utfpr.edu")) {
-            if (userService.findByEmail(user.getEmail()) == null) {
-                userPopulator.populeUser(user);
-                try {
-                    userService.createUser(user);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                LOG.info("User " + user.getEmail() + "success registered!");
-            } else {
-                LOG.warn("User with email " + user.getEmail() + " already exists!");
+        UserModel userExists = userService.findByEmail(user.getEmail());
 
-                return newPage("login/loginPage", "user");
-            }
-            return new ModelAndView("home/homepage", "user", user);
+        if (userExists != null) {
+            bindingResult.rejectValue("email", "error.user", "This email already exists!");
+
+            LOG.warn("User with email " + user.getEmail() + " already exists!");
         }
-        return newPage("login/register", "user");
+
+        if (bindingResult.hasErrors()) {
+            modelAndView.setViewName("login/signup.html");
+        } else {
+            userService.createUser(user);
+            modelAndView.addObject("msg", "User has been registered successfuly!");
+            modelAndView.addObject("user", new UserModel());
+            modelAndView.setViewName("login/signup.html");
+
+            LOG.info("User " + user.getEmail() + "success registered!");
+        }
+        return modelAndView;
+    }
+
+    @RequestMapping(value= {"/access_denied"}, method=RequestMethod.GET)
+    public ModelAndView accessDenied() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("errors/access_denied.html");
+        return modelAndView;
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String doRegister(HttpServletRequest request, HttpServletResponse response) {
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
 
         return REDIRECT_TO_LOGIN;
-    }
-
-    private ModelAndView newPage(String page, String object) {
-        ModelAndView modelAndView = null;
-
-        modelAndView = new ModelAndView(page);
-        modelAndView.addObject(object, new UserModel());
-
-        return modelAndView;
     }
 }

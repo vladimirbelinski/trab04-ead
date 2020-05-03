@@ -12,11 +12,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Repository
+@Repository("userDao")
 @Transactional
-public class DefaultUserDao implements UserDao {
+public class UserDaoImpl implements UserDao {
 
-    static final Logger LOG = LoggerFactory.getLogger(DefaultUserDao.class);
+    static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
 
     @PersistenceContext
     private EntityManager entityManager;
