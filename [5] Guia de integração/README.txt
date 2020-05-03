@@ -1,1 +1,0 @@
-Pasta para inclusão do guia de integração.
