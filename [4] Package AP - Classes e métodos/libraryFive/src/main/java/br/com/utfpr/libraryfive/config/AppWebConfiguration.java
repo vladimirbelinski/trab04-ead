@@ -1,39 +1,69 @@
 package br.com.utfpr.libraryfive.config;
 
-import br.com.utfpr.libraryfive.DAO.CollectionDao;
-import br.com.utfpr.libraryfive.DAO.UserDao;
-import br.com.utfpr.libraryfive.controllers.AbstractController;
-import br.com.utfpr.libraryfive.controllers.CollectionController;
-import br.com.utfpr.libraryfive.controllers.HomeController;
-import br.com.utfpr.libraryfive.controllers.LoginController;
-import br.com.utfpr.libraryfive.model.*;
-import br.com.utfpr.libraryfive.populator.UserPopulator;
-import br.com.utfpr.libraryfive.service.CollectionService;
-import br.com.utfpr.libraryfive.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
+import java.util.Locale;
+
+@Configuration
 @EnableWebMvc
 // informa quais serão as classes à serem lidas
 @ComponentScan(basePackages = "br.com.utfpr.libraryfive")
-public class AppWebConfiguration extends WebMvcConfigurerAdapter {
+public class AppWebConfiguration implements WebMvcConfigurer {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    /*
+     * STEP 1 - Create SpringResourceTemplateResolver
+     * */
     @Bean
-    public InternalResourceViewResolver internalResourceViewResolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("/WEB-INF/views/pages/");
-        resolver.setSuffix(".jsp");
-
-        return resolver;
+    public SpringResourceTemplateResolver templateResolver() {
+        SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+        templateResolver.setApplicationContext(applicationContext);
+        templateResolver.setPrefix("/WEB-INF/views/pages/");
+        templateResolver.setSuffix(".html");
+        return templateResolver;
     }
 
+    /*
+     * STEP 2 - Create SpringTemplateEngine
+     * */
     @Bean
-    public MultipartResolver multipartResolver(){
-        return new StandardServletMultipartResolver();
+    public SpringTemplateEngine templateEngine() {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver());
+        templateEngine.setEnableSpringELCompiler(true);
+        return templateEngine;
+    }
+
+    /*
+     * STEP 3 - Register ThymeleafViewResolver
+     * */
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
+        resolver.setTemplateEngine(templateEngine());
+        registry.viewResolver(resolver);
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("login/login");
+        registry.addViewController("/login").setViewName("login/login");
+        registry.addViewController("/home").setViewName("home/homepage");
     }
 }
