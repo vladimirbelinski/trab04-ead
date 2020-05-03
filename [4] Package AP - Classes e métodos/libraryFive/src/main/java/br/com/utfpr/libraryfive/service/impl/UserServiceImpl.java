@@ -2,6 +2,7 @@ package br.com.utfpr.libraryfive.service.impl;
 
 import br.com.utfpr.libraryfive.DAO.UserDao;
 import br.com.utfpr.libraryfive.model.UserModel;
+import br.com.utfpr.libraryfive.populator.UserPopulator;
 import br.com.utfpr.libraryfive.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,15 +10,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
+@Service("userService")
 @Transactional
 public class DefaultUserService implements UserService {
 
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
+
+    @Autowired
+    private UserPopulator userPopulator;
 
     @Override
     public void createUser(UserModel user) {
+        userPopulator.populeUser(user);
+
         userDao.createUser(user);
     }
 

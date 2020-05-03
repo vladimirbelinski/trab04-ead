@@ -14,7 +14,7 @@ import java.util.List;
 public class DefaultCollectionService implements CollectionService {
 
     @Autowired
-    CollectionDao collectionDao;
+    private CollectionDao collectionDao;
 
     @Override
     public void createCollection(CollectionModel collection) {
