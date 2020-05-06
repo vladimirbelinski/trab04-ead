@@ -8,4 +8,4 @@ Na imagem podem ser encontradas as diversas camadas da aplicação/pacotes repre
 
 ### Interface gráfica (_package_ IG) vs. Requisitos do sistema
 
-A relação de telas vs. _features_ e PBIs atendidos por cada uma delas pode ser verificada em: <a href="https://github.com/vladimirbelinski/trab04-ead/blob/master/%5B5%5D%20Guia%20de%20integra%C3%A7%C3%A3o/apresentacaoSistemaBibliotecaFive.pdf">Apresentação sistema</a>
+A relação de telas (nomeadas "imagens" na última _lane_ do diagrama apresentado acima) vs. _features_ e PBIs atendidos por cada uma delas pode ser verificada em: <a href="https://github.com/vladimirbelinski/trab04-ead/blob/master/%5B5%5D%20Guia%20de%20integra%C3%A7%C3%A3o/apresentacaoSistemaBibliotecaFive.pdf">Apresentação sistema</a>
