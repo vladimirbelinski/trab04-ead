@@ -1,0 +1,1 @@
+Pasta para inclusão dos artefatos gerados durante a elicitação e a especificação dos requisitos do sistema (mapas de empatia, descrição de _features_, PBIs, BDDs, etc).
