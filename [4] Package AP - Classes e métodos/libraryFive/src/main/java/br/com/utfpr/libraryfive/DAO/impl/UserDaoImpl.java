@@ -28,7 +28,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void editUser(UserModel user) {
-
+        entityManager.merge(user);
     }
 
     @Override
@@ -61,24 +61,23 @@ public class UserDaoImpl implements UserDao {
         return users;
     }
 
-/* TODO - custom spring security
-
     @Override
-    public UserModel findByName(String name) throws UsernameNotFoundException {
+    public UserModel findById(Integer id) {
         LOG.info("findByName started!");
 
-        List<UserModel> users = entityManager.createQuery("select u from UserModel u where u.name = :name", UserModel.class)
-                .setParameter("name", name)
+        List<UserModel> users = entityManager.createQuery("select u from UserModel u where u.id = :id", UserModel.class)
+                .setParameter("id", id)
                 .getResultList();
 
         if (users.isEmpty()) {
-            throw new UsernameNotFoundException
-                    ("The user " + name + " doesn't exist!");
+            LOG.info("The user " + id + " doesn't exist!");
+
+            return null;
         }
 
         LOG.info("Success! User with name " + users.get(0).getName() + " found!");
         return users.get(0);
-    }*/
+    }
 
     @Override
     public UserModel findByName(String name) {
@@ -114,6 +113,25 @@ public class UserDaoImpl implements UserDao {
 
         List<UserModel> users = entityManager.createQuery("select u from UserModel u where u.email = :email", UserModel.class)
                 .setParameter("email", email)
+                .getResultList();
+
+        if (users.isEmpty()) {
+            LOG.info("The user with " + email + " doesn't exist!");
+
+            return null;
+        }
+
+        LOG.info("Success! User with name " + users.get(0).getName() + " found!");
+        return users.get(0);
+    }
+
+    @Override
+    public UserModel doLogin(String email, String password) {
+        LOG.info("doLogin started!");
+
+        List<UserModel> users = entityManager.createQuery("select u from UserModel u where u.email = :email and u.password = :password", UserModel.class)
+                .setParameter("email", email)
+                .setParameter("password", password)
                 .getResultList();
 
         if (users.isEmpty()) {

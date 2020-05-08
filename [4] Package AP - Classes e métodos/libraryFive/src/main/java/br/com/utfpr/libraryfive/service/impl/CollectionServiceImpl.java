@@ -18,7 +18,13 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Override
     public void createCollection(CollectionModel collection) {
-        collectionDao.createCollection(collection);
+
+        CollectionModel existingCollection = findByTitle(collection.getTitle());
+        if (existingCollection == null) {
+            collectionDao.createCollection(collection);
+        } else {
+
+        }
     }
 
     @Override
@@ -42,8 +48,13 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
+    public List<CollectionModel> listAllCollections() {
+        return collectionDao.listAllCollections();
+    }
+
+    @Override
     public List<CollectionModel> findAllAvailableCollection() {
-        return null;
+        return collectionDao.findAllAvailableCollection();
     }
 
     @Override
@@ -62,7 +73,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public boolean isAvailable(CollectionModel collection) {
-        return collectionDao.isAvailable(collection);
+    public boolean isAvailable(CollectionModel collection, Integer quantity) {
+        return collectionDao.isAvailable(collection, quantity);
     }
 }

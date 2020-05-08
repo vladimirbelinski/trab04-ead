@@ -1,17 +1,23 @@
 package br.com.utfpr.libraryfive.DAO.impl;
 
 import br.com.utfpr.libraryfive.DAO.CollectionDao;
+import br.com.utfpr.libraryfive.model.CollectionCopyModel;
 import br.com.utfpr.libraryfive.model.CollectionModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository("collectionDao")
 @Transactional
 public class CollectionDaoImpl implements CollectionDao {
+
+    static final Logger LOG = LoggerFactory.getLogger(CollectionDaoImpl.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -42,8 +48,37 @@ public class CollectionDaoImpl implements CollectionDao {
     }
 
     @Override
+    public List<CollectionModel> listAllCollections() {
+        LOG.info("listAllCollections started!");
+        List<CollectionModel> collections;
+
+        try {
+            collections = entityManager. createQuery("select c from CollectionModel c" +
+                    " INNER JOIN c.collectionCopyList cp").
+                    getResultList();
+            LOG.info("Collections found!");
+        } catch (NoResultException e) {
+            collections = null;
+        }
+        return collections;
+    }
+
+    @Override
     public List<CollectionModel> findAllAvailableCollection() {
-        return null;
+        LOG.info("findAllAvailableCollection started!");
+        List<CollectionModel> collections;
+
+        try {
+            collections = entityManager. createQuery("select c from CollectionModel c" +
+                                                             " INNER JOIN c.collectionCopyList cp" +
+                                                             " WHERE cp.collectionCopySituation = :collectionCopySituation").
+                                                             setParameter("collectionCopySituation", CollectionCopyModel.CollectionCopySituation.Disponível).
+                                                             getResultList();
+            LOG.info("Collections found!");
+        } catch (NoResultException e) {
+            collections = null;
+        }
+        return collections;
     }
 
     @Override
@@ -62,7 +97,7 @@ public class CollectionDaoImpl implements CollectionDao {
     }
 
     @Override
-    public boolean isAvailable(CollectionModel collection) {
+    public boolean isAvailable(CollectionModel collection, Integer quantity) {
         return false;
     }
 }

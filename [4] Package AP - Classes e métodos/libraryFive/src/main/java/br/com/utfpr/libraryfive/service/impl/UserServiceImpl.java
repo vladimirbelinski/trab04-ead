@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -43,8 +47,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserModel> findAllUsers() {
+    public List<UserModel> listAllUsers() {
         return userDao.findAllUsers();
+    }
+
+    @Override
+    public UserModel findById(Integer id) {
+        return userDao.findById(id);
     }
 
     @Override
@@ -64,5 +73,60 @@ public class UserServiceImpl implements UserService {
 
     public UserModel findByEmail(String email) {
         return userDao.findByEmail(email);
+    }
+
+    public UserModel doLogin(String email, String password) {
+        return userDao.doLogin(email, password);
+    }
+
+    @Override
+    public UserModel getUserByregisterForm(HttpServletRequest request, Boolean isNewUser) {
+
+        UserModel user = new UserModel();
+
+        if (isNewUser) {
+            user.setId(getIntegerValue(request.getParameter("id")));
+            user.setName(request.getParameter("name"));
+            user.setEmail(request.getParameter("email"));
+            user.setPassword(request.getParameter("password"));
+            user.setUserType(request.getParameter("userType").equals("ALUNO") ? UserModel.UserType.ALUNO : UserModel.UserType.SERVIDOR);
+            user.setStreet(request.getParameter("street"));
+            user.setStreetNumber(getIntegerValue(request.getParameter("streetNumber")));
+            user.setAdditionalAddress(request.getParameter("additionalAddress"));
+            user.setNeighborhood(request.getParameter("neighborhood"));
+            user.setCity(request.getParameter("city"));
+            user.setState(request.getParameter("state"));
+            user.setBirthDate(convertDate(request.getParameter("birthDate")));
+            user.setAdmin(request.getParameter("admin").equals("SIM") ? true : false);
+            user.setUserStatus(request.getParameter("userStatus").equals("ATIVO") ? UserModel.UserStatus.ATIVO : UserModel.UserStatus.INATIVO);
+
+        } else {
+            user = findById(getIntegerValue(request.getParameter("userToEditId")));
+
+            user.setName(request.getParameter("name"));
+            user.setEmail(request.getParameter("email"));
+            user.setUserType(request.getParameter("userType").equals("ALUNO") ? UserModel.UserType.ALUNO : UserModel.UserType.SERVIDOR);
+            user.setAdmin(request.getParameter("admin").equals("SIM") ? true : false);
+            user.setUserStatus(request.getParameter("userStatus").equals("ATIVO") ? UserModel.UserStatus.ATIVO : UserModel.UserStatus.INATIVO);
+        }
+        return user;
+    }
+
+    private Integer getIntegerValue(String stringValue) {
+        return Integer.valueOf(stringValue);
+    }
+
+    private Date convertDate(final String data) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            return formatter.parse(data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String regexAddress() {
+        return null;
     }
 }

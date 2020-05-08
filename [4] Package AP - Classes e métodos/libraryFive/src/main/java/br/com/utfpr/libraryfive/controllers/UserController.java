@@ -3,6 +3,7 @@ package br.com.utfpr.libraryfive.controllers;
 import br.com.utfpr.libraryfive.service.UserService;
 import br.com.utfpr.libraryfive.model.UserModel;
 import br.com.utfpr.libraryfive.populator.UserPopulator;
+import br.com.utfpr.libraryfive.util.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.List;
 @Controller
 @Transactional
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends AbstractController {
 
     static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
@@ -29,14 +30,56 @@ public class UserController {
     @Autowired
     UserPopulator userPopulator;
 
-    @RequestMapping(value = "/delete", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView deleteUser(@RequestParam(value = "actualUserEmail", required = true) String actualUserEmail,
-                                   HttpServletRequest request, HttpServletResponse response) {
+    @Autowired
+    Session session;
 
-        UserModel actualUser = userService.findByEmail(actualUserEmail);
-        userService.deleteUser(actualUser);
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public String newUser(final HttpServletRequest request) {
 
-        return newPage("login/loginPage", "user");
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            UserModel user = userService.getUserByregisterForm(request, true);
+
+            if (user != null) {
+                userService.createUser(user);
+
+                return REDIRECT_TO_ADMIN_VIEW_USERS;
+            }
+        }
+        // retorna erro
+        return null;
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String editUser(final HttpServletRequest request) {
+
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            UserModel user = userService.getUserByregisterForm(request, false);
+
+            userService.editUser(user);
+
+            return REDIRECT_TO_ADMIN_VIEW_USERS;
+        }
+        // retorna erro
+        return null;
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    public String deleteUser(@RequestParam("id") final int id) {
+
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            UserModel user = userService.findById(id);
+            userService.deleteUser(user);
+
+            return REDIRECT_TO_ADMIN_VIEW_USERS;
+        }
+        // retorna erro
+        return null;
     }
 
     @RequestMapping(value = "/listAllUsers", method = RequestMethod.GET)
@@ -44,17 +87,24 @@ public class UserController {
                                      HttpServletRequest request, HttpServletResponse response,
                                      BindingResult result) {
 
-        // TODO - Implementar verificação se usuario atual é admin para visualizar esta tela
-        List<UserModel> users = userService.findAllUsers();
-
         UserModel actualUser = userService.findByEmail(actualUserEmail);
+        if (actualUser.getAdmin()) {
 
-        ModelAndView modelAndView = new ModelAndView("home/homepage");
-        modelAndView.addObject("users", users);
-        modelAndView.addObject("user", actualUser);
-        LOG.info("Users success retrieved!");
+            List<UserModel> users = userService.listAllUsers();
 
-        return modelAndView;
+            ModelAndView modelAndView = new ModelAndView("home/homepage");
+            modelAndView.addObject("users", users);
+            modelAndView.addObject("user", actualUser);
+            LOG.info("Users success retrieved!");
+
+            return modelAndView;
+        }
+            return null;
+    }
+
+    @RequestMapping(value = "/findOne", method = RequestMethod.GET)
+    public UserModel findById(final Integer id) {
+        return userService.findById(id);
     }
 
     private ModelAndView newPage(String page, String object) {

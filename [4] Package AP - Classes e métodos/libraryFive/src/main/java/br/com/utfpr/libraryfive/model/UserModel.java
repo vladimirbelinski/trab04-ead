@@ -114,6 +114,12 @@ public class UserModel implements Serializable {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<ReserveModel> reserve;
 
+    public String addres() {
+        return street.concat(", ").
+                concat(String.valueOf(streetNumber)).
+                concat(" - ").concat(city);
+    }
+
     // getters and setters
     public Integer getId() {
         return id;

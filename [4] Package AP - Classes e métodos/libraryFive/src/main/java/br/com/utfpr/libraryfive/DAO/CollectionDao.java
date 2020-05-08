@@ -16,6 +16,8 @@ public interface CollectionDao {
 
     void setActive(CollectionModel collection, Boolean active);
 
+    List<CollectionModel> listAllCollections();
+
     List<CollectionModel> findAllAvailableCollection();
 
     CollectionModel findByTitle(String title);
@@ -24,5 +26,5 @@ public interface CollectionDao {
 
     List<CollectionModel> showCollectionInfo();
 
-    boolean isAvailable(CollectionModel collection);
+    boolean isAvailable(CollectionModel collection, Integer quantity);
 }

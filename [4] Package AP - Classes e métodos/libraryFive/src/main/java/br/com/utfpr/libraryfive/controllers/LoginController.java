@@ -2,17 +2,13 @@ package br.com.utfpr.libraryfive.controllers;
 
 import br.com.utfpr.libraryfive.service.UserService;
 import br.com.utfpr.libraryfive.model.UserModel;
+import br.com.utfpr.libraryfive.util.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -20,13 +16,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -34,19 +27,13 @@ import java.util.Date;
 @Transactional
 public class LoginController extends AbstractController {
 
-    private static final String XXX = "/selecionar-perfil";
-    private static final String FORM_GLOBAL_ERROR = "form.global.error";
-    private static final String REDIRECT_TO_SIGNUP = REDIRECT_PREFIX + "/signup";
-    private static final String REDIRECT_TO_HOMEPAGE = REDIRECT_PREFIX + "/home";
-    private static final String REDIRECT_TO_LOGIN = REDIRECT_PREFIX + "/login";
-
     static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     UserService userService;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    Session session;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -65,33 +52,27 @@ public class LoginController extends AbstractController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView doLogin(HttpServletRequest request, HttpServletResponse response,
-                                @ModelAttribute("user") UserModel user, BindingResult result,
-                                final RedirectAttributes redirectAttributes) {
+    public String doLogin(HttpServletRequest request, HttpServletResponse response,
+                                @ModelAttribute("user") UserModel user, BindingResult result) {
 
-        ModelAndView modelAndView = null;
+        ModelAndView modelAndView = new ModelAndView();
 
-        if (userService.findByEmail(user.getEmail()) != null) {
-            //TODO - Fazer validacao de senha
-            LOG.info("User " + user.getEmail() + "exists, redirecting to homepage...");
+        if (userService.doLogin(user.getEmail(), user.getPassword()) != null) {
+            LOG.info("User " + user.getEmail() + " exists, redirecting to homepage...");
 
-            modelAndView = new ModelAndView(new RedirectView("user/listAllUsers"));
-            redirectAttributes.addFlashAttribute("actualUserEmail", user.getEmail());
-            return modelAndView;
+            UserModel userModel = userService.findByEmail(user.getEmail());
+
+            session.setCurrentUser(userModel);
+
+            modelAndView.addObject("userName", userModel.getName());
+            modelAndView.addObject("email", userModel.getEmail());
+
+            return REDIRECT_TO_HOMEPAGE;
         } else {
             LOG.info("User " + user.getEmail() + "doesn't exists, redirecting to login page...");
-            modelAndView = new ModelAndView("login/login.html");
+
+            return REDIRECT_TO_LOGIN;
         }
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/signup", method = RequestMethod.GET)
-    public ModelAndView showSignup() {
-
-        ModelAndView modelAndView = new ModelAndView("login/signup.html");
-        modelAndView.addObject("user", new UserModel());
-
-        return modelAndView;
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)

@@ -1,20 +1,18 @@
 package br.com.utfpr.libraryfive.service;
 
-public class LoanService {
+import br.com.utfpr.libraryfive.model.LoanModel;
 
-    void makeLoan(){
-        // ...
-    }
+import java.util.List;
 
-    void makeReturn(){
-        // ...
-    }
+public interface LoanService {
 
-    void listLoans(){
-        // ...
-    }
+    void makeLoan(String collectionTitle, Integer quantity);
 
-    void renewLoan(){
-        // ...
-    }
+    LoanModel findById(Integer id);
+
+    List<LoanModel> listAll();
+
+    List<LoanModel> listAllByUserEmail(String userEmail);
+
+    void renewLoan();
 }

@@ -2,6 +2,7 @@ package br.com.utfpr.libraryfive.service;
 
 import br.com.utfpr.libraryfive.model.UserModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface UserService {
@@ -14,7 +15,9 @@ public interface UserService {
 
     void setActive(UserModel user, Boolean active);
 
-    List<UserModel> findAllUsers();
+    List<UserModel> listAllUsers();
+
+    UserModel findById(Integer id);
 
     UserModel findByName(String name);
 
@@ -23,4 +26,8 @@ public interface UserService {
     UserModel findByStatus(String status);
 
     UserModel findByEmail(String email);
+
+    UserModel doLogin(String email, String password);
+
+    UserModel getUserByregisterForm(HttpServletRequest request, Boolean isNewUser);
 }

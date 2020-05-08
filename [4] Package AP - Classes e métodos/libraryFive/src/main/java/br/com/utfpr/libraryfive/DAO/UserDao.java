@@ -16,6 +16,8 @@ public interface UserDao {
 
     List<UserModel> findAllUsers();
 
+    UserModel findById(Integer id);
+
     UserModel findByName(String name);
 
     UserModel findByType(String type);
@@ -23,4 +25,6 @@ public interface UserDao {
     UserModel findByStatus(String status);
 
     UserModel findByEmail(String email);
+
+    UserModel doLogin(String email, String password);
 }

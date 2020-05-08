@@ -35,8 +35,31 @@ public class CollectionModel implements Serializable {
     @Column(name = "TIPO_OBRA", columnDefinition="ENUM('Literatura','Tese/Monografia','Outros')")
     private CollectionType collectionType;
 
-    public enum CollectionType {
+/*    public enum CollectionType {
         Literatura, Tese{public String toString(){return "Tese/Monografia";}}, Outros
+    }*/
+
+    public enum CollectionType {
+        Literatura  {
+            @Override
+            public String toString() {
+                return "Literatura";
+            }
+        },
+
+        TeseMonografia {
+            @Override
+            public String toString() {
+                return "Tese/Monografia";
+            }
+        },
+
+        Outros {
+            @Override
+            public String toString() {
+                return "Outros";
+            }
+        }
     }
 
     // relations

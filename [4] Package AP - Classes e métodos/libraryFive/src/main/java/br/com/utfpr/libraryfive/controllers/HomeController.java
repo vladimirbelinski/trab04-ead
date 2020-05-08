@@ -1,29 +1,31 @@
 package br.com.utfpr.libraryfive.controllers;
 
-import br.com.utfpr.libraryfive.service.CollectionService;
+import br.com.utfpr.libraryfive.util.Session;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @Transactional
 @RequestMapping("/home")
-public class HomeController {
+public class HomeController extends AbstractController {
 
     static final Logger log = Logger.getLogger(HomeController.class);
 
     @Autowired
-    CollectionService collectionService;
+    Session session;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String index() {
-        log.debug("Estou na página principal");
+    public ModelAndView index(ModelAndView modelAndView) {
 
-        collectionService.findAllAvailableCollection();
-        return "home/homepage";
+        modelAndView.setViewName("home/homepage");
+        modelAndView.addObject("userName", session.getCurrentUser().getName());
+
+        return modelAndView;
     }
 
 }
