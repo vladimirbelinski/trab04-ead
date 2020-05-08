@@ -1,1 +1,0 @@
-Pasta para inclusão das classes e métodos do sistema.

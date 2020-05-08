@@ -1,0 +1,111 @@
+package br.com.utfpr.libraryfive.controllers;
+
+import br.com.utfpr.libraryfive.model.CollectionModel;
+import br.com.utfpr.libraryfive.model.LoanModel;
+import br.com.utfpr.libraryfive.model.UserModel;
+import br.com.utfpr.libraryfive.service.CollectionService;
+import br.com.utfpr.libraryfive.service.LoanService;
+import br.com.utfpr.libraryfive.service.UserService;
+import br.com.utfpr.libraryfive.util.ModifiedCollection;
+import br.com.utfpr.libraryfive.util.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller
+@Transactional
+@RequestMapping("/admin")
+public class AdminController {
+
+    static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
+
+    @Autowired
+    CollectionService collectionService;
+
+    @Autowired
+    LoanService loanService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    private Session session;
+
+    @RequestMapping(value = {"/manage/collections"}, method = RequestMethod.GET)
+    public ModelAndView manageCollections(ModelAndView modelAndView) {
+
+        List<CollectionModel> allCollections = collectionService.listAllCollections();
+        List<ModifiedCollection> collections = new ArrayList<>();
+
+        for (CollectionModel collectionModel : allCollections) {
+            ModifiedCollection modifiedCollection = new ModifiedCollection();
+            modifiedCollection.setId(collectionModel.getId());
+            modifiedCollection.setTitle(collectionModel.getTitle());
+            modifiedCollection.setAuthor("teste");
+            modifiedCollection.setType(collectionModel.getCollectionType().name());
+
+            collections.add(modifiedCollection);
+        }
+
+        if (!allCollections.isEmpty()) {
+            modelAndView.setViewName("collection/collectionListAdmin");
+            modelAndView.addObject("collections", collections);
+            modelAndView.addObject("userName", session.getCurrentUser().getName());
+
+            LOG.info("Collections success retrieved!");
+
+            return modelAndView;
+        }
+        // retorna erro
+        return null;
+    }
+
+    @RequestMapping(value = {"/manage/loans"}, method = RequestMethod.GET)
+    public ModelAndView manageLoans(ModelAndView modelAndView) {
+
+        List<LoanModel> allLoans = loanService.listAll();
+
+        if (!allLoans.isEmpty()) {
+
+            modelAndView.setViewName("loan/adminLoan");
+            modelAndView.addObject("loans", allLoans);
+            modelAndView.addObject("userName", session.getCurrentUser().getName());
+
+            LOG.info("Loans success retrieved!");
+
+            return modelAndView;
+        }
+
+        // retorna erro
+        return null;
+    }
+
+    @RequestMapping(value = {"/manage/users"}, method = RequestMethod.GET)
+    public ModelAndView manageUsers(ModelAndView modelAndView, HttpServletRequest request) {
+
+        List<UserModel> users = userService.findAllUsers();
+
+        if (!users.isEmpty()) {
+            modelAndView.setViewName("user/adminView");
+            modelAndView.addObject("users", users);
+            modelAndView.addObject("userName", session.getCurrentUser().getName());
+            modelAndView.addObject("baseUrl", session.getBaseUrl(request));
+
+            LOG.info("Users success retrieved!");
+
+            return modelAndView;
+        }
+
+        // retorna erro
+        return null;
+    }
+}

@@ -1,0 +1,15 @@
+.center {
+    margin: 15%;
+    margin-top: 5%;
+    margin-bottom: 2%;
+}
+
+.makeLoanButton{
+    margin-right: 15%;
+    text-align: center;
+    padding: 15px 20px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    background-color: #1e7e34;
+    font-size: 15px;
+}
