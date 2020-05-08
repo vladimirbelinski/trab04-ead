@@ -92,7 +92,7 @@ public class UserController extends AbstractController {
 
             List<UserModel> users = userService.listAllUsers();
 
-            ModelAndView modelAndView = new ModelAndView("home/homepage");
+            ModelAndView modelAndView = new ModelAndView("homeAdmin");
             modelAndView.addObject("users", users);
             modelAndView.addObject("user", actualUser);
             LOG.info("Users success retrieved!");

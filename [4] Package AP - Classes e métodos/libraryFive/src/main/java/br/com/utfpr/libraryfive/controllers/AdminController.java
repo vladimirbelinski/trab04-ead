@@ -92,7 +92,7 @@ public class AdminController {
     @RequestMapping(value = {"/manage/users"}, method = RequestMethod.GET)
     public ModelAndView manageUsers(ModelAndView modelAndView, HttpServletRequest request) {
 
-        List<UserModel> users = userService.findAllUsers();
+        List<UserModel> users = userService.listAllUsers();
 
         if (!users.isEmpty()) {
             modelAndView.setViewName("user/adminView");

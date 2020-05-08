@@ -62,6 +62,7 @@ public class LoginController extends AbstractController {
 
             UserModel userModel = userService.findByEmail(user.getEmail());
 
+            // Without Spring Security, this is the best way I found to deal with current user
             session.setCurrentUser(userModel);
 
             modelAndView.addObject("userName", userModel.getName());

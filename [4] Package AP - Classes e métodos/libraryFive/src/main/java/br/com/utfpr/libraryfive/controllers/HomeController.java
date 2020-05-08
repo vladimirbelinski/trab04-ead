@@ -22,10 +22,12 @@ public class HomeController extends AbstractController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView index(ModelAndView modelAndView) {
 
-        modelAndView.setViewName("home/homepage");
+        if (session.getCurrentUser().getAdmin())
+            modelAndView.setViewName("home/homeAdmin");
+        modelAndView.setViewName("home/homeUser");
+
         modelAndView.addObject("userName", session.getCurrentUser().getName());
 
         return modelAndView;
     }
-
 }

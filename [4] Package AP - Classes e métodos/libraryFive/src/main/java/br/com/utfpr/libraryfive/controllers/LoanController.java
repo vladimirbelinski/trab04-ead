@@ -52,7 +52,7 @@ public class LoanController extends AbstractController {
         Integer collectionQtd = Integer.valueOf(request.getParameter("quantidade"));
 
         CollectionModel collection = collectionService.findByTitle(collectionTitle);
-        if (collection != null && collectionService.isAvailable(collection))
+        if (collection != null && collectionService.isAvailable(collection, collectionQtd))
             // fazer o empréstimo
             loanService.makeLoan(collectionTitle, collectionQtd);
 
