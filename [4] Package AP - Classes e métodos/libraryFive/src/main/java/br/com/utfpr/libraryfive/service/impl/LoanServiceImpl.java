@@ -32,10 +32,10 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public void makeLoan(String collectionTitle, Integer quantity) {
 
-        // ID_EMPRESTIMO - gerado automaticamente
-
         // ID_USUARIO
         session.getCurrentUser().getId();
+
+        // ID_EMPRESTIMO - gerado automaticamente
 
         // ID_EXEMPLAR
         String collectionCopy = collectionCopyService.findCollectionCopyByCollectionTitle(collectionTitle);

@@ -1,8 +1,10 @@
 package br.com.utfpr.libraryfive.controllers;
 
+import br.com.utfpr.libraryfive.model.AuthorModel;
 import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.model.LoanModel;
 import br.com.utfpr.libraryfive.model.UserModel;
+import br.com.utfpr.libraryfive.service.AuthorService;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.service.LoanService;
 import br.com.utfpr.libraryfive.service.UserService;
@@ -29,6 +31,9 @@ public class AdminController {
     static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
+    private Session session;
+
+    @Autowired
     CollectionService collectionService;
 
     @Autowired
@@ -38,7 +43,26 @@ public class AdminController {
     UserService userService;
 
     @Autowired
-    private Session session;
+    AuthorService authorService;
+
+    @RequestMapping(value = {"/manage/authors"}, method = RequestMethod.GET)
+    public ModelAndView manageAuthors(ModelAndView modelAndView, HttpServletRequest request) {
+
+        List<AuthorModel> authors = authorService.listAllAuthors();
+
+        if (!authors.isEmpty()) {
+            modelAndView.setViewName("author/adminAuthor");
+            modelAndView.addObject("authors", authors);
+            modelAndView.addObject("userName", session.getCurrentUser().getName());
+            modelAndView.addObject("baseUrl", session.getBaseUrl(request));
+
+            LOG.info("Authors success retrieved!");
+
+            return modelAndView;
+        }
+        // retorna erro
+        return null;
+    }
 
     @RequestMapping(value = {"/manage/collections"}, method = RequestMethod.GET)
     public ModelAndView manageCollections(ModelAndView modelAndView) {
@@ -84,7 +108,6 @@ public class AdminController {
 
             return modelAndView;
         }
-
         // retorna erro
         return null;
     }
@@ -104,7 +127,6 @@ public class AdminController {
 
             return modelAndView;
         }
-
         // retorna erro
         return null;
     }

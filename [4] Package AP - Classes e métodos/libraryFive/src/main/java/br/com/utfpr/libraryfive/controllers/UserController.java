@@ -25,13 +25,13 @@ public class UserController extends AbstractController {
     static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
+    Session session;
+
+    @Autowired
     UserService userService;
 
     @Autowired
     UserPopulator userPopulator;
-
-    @Autowired
-    Session session;
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String newUser(final HttpServletRequest request) {
@@ -39,7 +39,7 @@ public class UserController extends AbstractController {
         Boolean isAdmin = session.getCurrentUser().getAdmin();
 
         if (isAdmin) {
-            UserModel user = userService.getUserByregisterForm(request, true);
+            UserModel user = userService.getUserByRegisterForm(request, true);
 
             if (user != null) {
                 userService.createUser(user);
@@ -57,7 +57,7 @@ public class UserController extends AbstractController {
         Boolean isAdmin = session.getCurrentUser().getAdmin();
 
         if (isAdmin) {
-            UserModel user = userService.getUserByregisterForm(request, false);
+            UserModel user = userService.getUserByRegisterForm(request, false);
 
             userService.editUser(user);
 

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="ctx" th:content="${#httpServletRequest.getContextPath()}"/>
+    <title>Admin - Manage users</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- My CSS -->
+    <link rel="stylesheet" type="text/css" media="all"
+          href="/resources/css/navbar.css" th:href="@{/resources/css/navbar.css}"/>
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="/resources/css/users.css" th:href="@{/resources/css/users.css}"/>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var _ctx = $("meta[name='_ctx']").attr("content");
+
+            // Prepend context path to all jQuery AJAX requests
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                if (!options.crossDomain) {
+                    options.url = _ctx + options.url;
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            // Activate tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Filter table rows based on searched term
+            $("#search").on("keyup", function () {
+                var term = $(this).val().toLowerCase();
+                $("table tbody tr").each(function () {
+                    $row = $(this);
+                    var name = $row.find("td:nth-child(2)").text().toLowerCase();
+                    console.log(name);
+                    if (name.search(term) < 0) {
+                        $row.hide();
+                    } else {
+                        $row.show();
+                    }
+                });
+            });
+        });
+
+
+        $(document).ready(function () {
+            $('.userToEditId').on('click', function (event) {
+                event.preventDefault(); // ???
+                var name = $(this).attr('data-name'); // pega atributo do form
+
+                $('#editAuthorModal #name').val(name); // coloca o atributo na nodal
+                $('#editAuthorModal').modal(); // abre a modal manualmente
+            });
+        });
+
+        // Delete author
+        $(document).ready(function () {
+            $('.table .delBtn').on('click', function (event) {
+                event.preventDefault();
+                var href = $(this).attr('href');
+                $('#deleteAuthorModal #delRef').attr('href', href);
+                $('#deleteAuthorModal').modal();
+            });
+        });
+
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-expand-lg navbar-light">
+    <div class="navbar-header d-flex col">
+        <a class="navbar-brand" th:href="@{/home}">Library<b>Five</b></a>
+        <button type="button" data-target="#navbarCollapse" data-toggle="collapse"
+                class="navbar-toggle navbar-toggler ml-auto">
+            <span class="navbar-toggler-icon"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+    </div>
+    <!-- Collection of nav links, forms, and other content for toggling -->
+    <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
+        <ul class="nav navbar-nav">
+            <li class="nav-item active"><a th:href="@{/collection/list}" class="nav-link">Catálogo</a></li>
+            <li class="nav-item dropdown">
+                <a data-toggle="dropdown" class="nav-link dropdown-toggle" href="#">Administração<b
+                        class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/admin/manage/authors}" class="dropdown-item">Administrar autores</a></li>
+                    <li><a th:href="@{/admin/manage/collections}" class="dropdown-item">Administrar catálogo</a></li>
+                    <li><a th:href="@{/admin/manage/loans}" class="dropdown-item">Administrar empréstimos</a></li>
+                    <li><a th:href="@{/admin/manage/users}">Administrar usuários</a></li>
+                </ul>
+            </li>
+
+        </ul>
+        <!--        <form class="navbar-form form-inline navbar-right ml-auto">
+                    <div class="input-group search-box">
+                        <input type="text" class="form-control">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary"><span>Search</span></button>
+                        </span>
+                    </div>
+                </form>-->
+        <ul class="nav navbar-nav navbar-right ml-auto">
+            <li class="nav-item dropdown">
+                <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action"><span
+                        th:utext="${userName}"></span><b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/user/myaccount}" class="dropdown-item"><i class="fa fa-user-o"></i> Minha
+                        conta</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li><a th:href="@{/logout}" class="dropdown-item"><i class="material-icons">&#xE8AC;</i> Logout</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Authors table -->
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2>Administrar <b>Autores</b></h2>
+                </div>
+                <div class="col-sm-6">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <input type="text" id="search" class="form-control" placeholder="Procurar por nome">
+                            <span class="input-group-addon"><i class="material-icons">&#xE8B6;</i></span>
+                        </div>
+                    </div>
+                    <a href="#addAuthorModal" class="btn btn-customized btn-customized-hover" data-toggle="modal"><i
+                            class="material-icons">&#xE147;</i>
+                        <span>Adicionar novo autor</span></a>
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped" id="usersTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th style="width: 22%;">Nome</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="author, custStat : ${authors}">
+                <td><span th:text="${author.id}"></span></td>
+                <td><span th:text="${author.name}"></span></td>
+                <td>
+                    <a href="" class="edit userToEditId"
+                       th:data-name="${author.name}" >
+                        <i
+                                class="material-icons"
+                                data-toggle="tooltip" title="Editar">&#xE254;
+                        </i>
+                    </a>
+
+                    <a th:href="@{__${baseUrl}__/author/delete/(id=${author.id})}" class="delete delBtn"
+                       data-toggle="modal"><i
+                            class="material-icons"
+                            data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add author Modal HTML -->
+<div id="addAuthorModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" th:action="@{/author/new}">
+                <div class="modal-header">
+                    <h4 class="modal-title">Adicionar autor</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-success" value="Adicionar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit author Modal HTML -->
+<div id="editAuthorModal" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold text-secondary ml-5">Editar autor</h4>
+                <button type="button" class="close text-secondary" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mx-3">
+                <div class="md-form mb-5">
+                    <label data-error="wrong" data-success="right" for="name">Nome</label>
+                    <input type="text" id="name" name="name" class="form-control validate" required>
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer d-flex justify-content-center editInsideWrapper">
+                <input type="submit" class="btn btn-outline-secondary btn-block editInside"
+                       value="Editar autor">
+                <input id="userToEditId" name="userToEditId" type="hidden" value=""/>
+                <div id="result"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete author Modal HTML -->
+<div id="deleteAuthorModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Deletar autor</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Você tem certeza que quer deletar este autor?</p>
+                <p class="text-warning"><small>Esta ação não poderá ser desfeita.</small></p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                <a href="" class="btn btn-danger" id="delRef">Deletar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

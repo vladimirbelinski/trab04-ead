@@ -29,5 +29,5 @@ public interface UserService {
 
     UserModel doLogin(String email, String password);
 
-    UserModel getUserByregisterForm(HttpServletRequest request, Boolean isNewUser);
+    UserModel getUserByRegisterForm(HttpServletRequest request, Boolean isNewUser);
 }

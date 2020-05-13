@@ -47,6 +47,7 @@
                 <a data-toggle="dropdown" class="nav-link dropdown-toggle" href="#">Administração<b
                         class="caret"></b></a>
                 <ul class="dropdown-menu">
+                    <li><a th:href="@{/admin/manage/authors}" class="dropdown-item">Administrar autores</a></li>
                     <li><a th:href="@{/admin/manage/collections}" class="dropdown-item">Administrar catálogo</a></li>
                     <li><a th:href="@{/admin/manage/loans}" class="dropdown-item">Administrar empréstimos</a></li>
                     <li><a th:href="@{/admin/manage/users}">Administrar usuários</a></li>
@@ -83,7 +84,6 @@
                     <h2>Meus <b>Empréstimos</b></h2>
                 </div>
                 <div class="col-sm-7">
-                    <a th:href="@{/collection/list}" class="btn btn-primary"><i class="material-icons">&#xE147;</i> <span>Fazer novo empréstimo</span></a>
                     <a href="#" class="btn btn-primary"><i class="material-icons">&#xE24D;</i> <span>Exportar para Excel</span></a>
                 </div>
             </div>
@@ -93,6 +93,7 @@
             <tr>
                 <th>#</th>
                 <th>Livro</th>
+                <th>Usuário</th>
                 <th>Data do empréstimo</th>
                 <th>Data prevista para devolução</th>
                 <th>Status</th>
@@ -102,10 +103,14 @@
             <tbody>
             <tr th:each="loan, custStat : ${loans}">
                 <td><span th:text="${custStat.count}"></span></td>
+                <td><span th:text="${loan.collectionCopy.collection.getTitle()}"></span></td>
+                <td><span th:text="${loan.user.name}"></span></td>
                 <td><span th:text="${loan.loanDate}"></span></td>
-                <td><span th:text="${{loan.expectedReturnDate}}"></span></td>
-                <td><span th:text="${loan.user}"></span></td>
-                <td><span class="status text-success">&bull;</span> Em dia</td>
+                <td><span th:text="${loan.expectedReturnDate}"></span></td>
+                <td>
+                    <span th:if="${loan.expectedReturnDate.before(#dates.createNow())}"><span class="status text-danger">&bull;</span> Atrasado</span>
+                    <span th:if="${loan.expectedReturnDate.after(#dates.createNow())}"><span class="status text-success">&bull;</span> Em dia</span>
+                </td>
                 <td>
                     <a href="#" class="settings" title="Renovar" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
                     <a href="#" class="delete" title="Devolver" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>

@@ -11,4 +11,5 @@ public abstract class AbstractController {
     protected static final String REDIRECT_TO_MY_LOANS = REDIRECT_PREFIX + "/user/myloans";
     protected static final String REDIRECT_TO_COLLECTION_LIST = REDIRECT_PREFIX + "/login";
     protected static final String REDIRECT_TO_ADMIN_VIEW_USERS = REDIRECT_PREFIX + "/admin/manage/users";
+    protected static final String REDIRECT_TO_ADMIN_VIEW_AUTHORS = REDIRECT_PREFIX + "/admin/manage/authors";
 }

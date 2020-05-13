@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserModel getUserByregisterForm(HttpServletRequest request, Boolean isNewUser) {
+    public UserModel getUserByRegisterForm(HttpServletRequest request, Boolean isNewUser) {
 
         UserModel user = new UserModel();
 
