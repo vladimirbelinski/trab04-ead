@@ -4,6 +4,7 @@ import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.model.LoanModel;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.service.LoanService;
+import br.com.utfpr.libraryfive.util.DateUtils;
 import br.com.utfpr.libraryfive.util.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,30 +21,16 @@ import java.util.List;
 public class LoanController extends AbstractController {
 
     @Autowired
+    private Session session;
+
+    @Autowired
+    private DateUtils dateUtils;
+
+    @Autowired
     private LoanService loanService;
 
     @Autowired
     private CollectionService collectionService;
-
-    @Autowired
-    Session session;
-
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ModelAndView showLoans(HttpServletRequest request) {
-
-        List<LoanModel> loans = loanService.listAllByUserEmail(session.getCurrentUser().getEmail());
-
-        if (!loans.isEmpty()) {
-            ModelAndView modelAndView = new ModelAndView();
-            modelAndView.setViewName("loan/userLoan");
-            modelAndView.addObject("loans", loans);
-            modelAndView.addObject("userName", session.getCurrentUser().getName());
-
-            return modelAndView;
-        }
-        // retorna erro
-        return null;
-    }
 
     @RequestMapping(value = {"/new"}, method = RequestMethod.POST)
     public String newLoan(HttpServletRequest request, ModelAndView modelAndView) {
@@ -57,5 +44,22 @@ public class LoanController extends AbstractController {
             loanService.makeLoan(collectionTitle, collectionQtd);
 
         return REDIRECT_TO_MY_LOANS;
+    }
+
+    @RequestMapping(value = "/myloans", method = RequestMethod.GET)
+    public ModelAndView showMyLoans(HttpServletRequest request) {
+
+        List<LoanModel> loans = loanService.listAllByEmail(session.getCurrentUser().getEmail());
+
+        if (!loans.isEmpty()) {
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("loan/userLoan");
+            modelAndView.addObject("loans", loans);
+            modelAndView.addObject("userName", session.getCurrentUser().getName());
+
+            return modelAndView;
+        }
+        // retorna erro
+        return null;
     }
 }

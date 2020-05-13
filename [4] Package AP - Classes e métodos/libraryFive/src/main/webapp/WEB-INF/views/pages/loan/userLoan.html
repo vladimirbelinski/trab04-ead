@@ -96,10 +96,13 @@
             <tbody>
             <tr th:each="loan, custStat : ${loans}">
                 <td><span th:text="${custStat.count}"></span></td>
+                <td><span th:text="${loan.collectionCopy.collection.getTitle()}"></span></td>
                 <td><span th:text="${loan.loanDate}"></span></td>
                 <td><span th:text="${loan.expectedReturnDate}"></span></td>
-                <td><span th:text="${loan.user}"></span></td>
-                <td><span class="status text-success">&bull;</span> Em dia</td>
+                <td>
+                    <span th:if="${loan.expectedReturnDate.before(#dates.createNow())}"><span class="status text-danger">&bull;</span> Atrasado</span>
+                    <span th:if="${loan.expectedReturnDate.after(#dates.createNow())}"><span class="status text-success">&bull;</span> Em dia</span>
+                </td>
                 <td>
                     <a href="#" class="settings" title="Renovar" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
                     <a href="#" class="delete" title="Devolver" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>

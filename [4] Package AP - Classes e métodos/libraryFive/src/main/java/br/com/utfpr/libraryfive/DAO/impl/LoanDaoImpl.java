@@ -47,8 +47,21 @@ public class LoanDaoImpl implements LoanDao {
     }
 
     @Override
-    public List<LoanModel> listAllByUserEmail(String userEmail) {
-        return null;
+    public List<LoanModel> listAllByEmail(String userEmail) {
+        LOG.info("listAll loans ByEmail started!");
+        List<LoanModel> loans;
+
+        try {
+            loans = entityManager. createQuery("select l from LoanModel l" +
+                    " INNER JOIN l.user u" +
+                    " WHERE u.email = :email").
+                    setParameter("email", userEmail).
+                    getResultList();
+            LOG.info("Loans found!");
+        } catch (NoResultException e) {
+            loans = null;
+        }
+        return loans;
     }
 
     @Override

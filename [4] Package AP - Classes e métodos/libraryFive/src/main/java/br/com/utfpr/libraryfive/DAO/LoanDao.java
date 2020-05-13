@@ -13,7 +13,7 @@ public interface LoanDao {
 
     List<LoanModel> listAll();
 
-    List<LoanModel> listAllByUserEmail(String userEmail);
+    List<LoanModel> listAllByEmail(String userEmail);
 
     void renewLoan();
 }
