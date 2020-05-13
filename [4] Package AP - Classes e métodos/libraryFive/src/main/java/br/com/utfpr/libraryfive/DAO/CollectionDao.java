@@ -1,5 +1,6 @@
 package br.com.utfpr.libraryfive.DAO;
 
+import br.com.utfpr.libraryfive.model.AuthorModel;
 import br.com.utfpr.libraryfive.model.CollectionModel;
 
 import java.util.List;
@@ -19,6 +20,8 @@ public interface CollectionDao {
     List<CollectionModel> listAllCollections();
 
     List<CollectionModel> findAllAvailableCollection();
+
+    CollectionModel findById(Integer id);
 
     CollectionModel findByTitle(String title);
 

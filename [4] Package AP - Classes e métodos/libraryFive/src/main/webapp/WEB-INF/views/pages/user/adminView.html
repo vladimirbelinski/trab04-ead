@@ -54,54 +54,27 @@
             });
         });
 
-        /*        // TODO - Edit user
-                $(document).ready(function () {
-                    $('.table .eBtn').on('click', function (event) {
-                        event.preventDefault();
-                        var href = $ (this).attr('hre');
-
-                        $.get(href, function (user, status) {
-                            $('.myForm #id').val(user.id);
-                            $('.myForm #name').val(user.name);
-                            $('.myForm #email').val(user.email);
-                            $('.myForm #userType').val(user.userType);
-                            $('.myForm #admin').val(user.admin);
-                            $('.myForm #userStatus').val(user.userStatus);
-
-                        });
-
-                        $('.myForm #editUserModal').modal();
-                    });
-                });*/
-
-        // edit
-/*        $(document).ready(function () {
-            $('.table .userToEditId').on('click', function (event) {
-                event.preventDefault();
-                var href = $(this).attr('href');
-                $('#editUserModal').find('text#email').val($(event.relatedTarget).data('href'))
-                // $('#deleteUserModal #delRef').attr('href', id);
-                $('#editUserModal').modal();
-            });
-        });*/
-
+        // Edit user
         $(document).ready(function () {
             $('.userToEditId').on('click', function (event) {
-                event.preventDefault(); // ???
-                var name = $(this).attr('data-name'); // pega atributo do form
-                var email = $(this).attr('data-email'); // pega atributo do form
-                var address = $(this).attr('data-address'); // pega atributo do form
-                var userType = $(this).attr('data-userType'); // pega atributo do form
-                var admin = $(this).attr('data-admin'); // pega atributo do form
-                var userStatus = $(this).attr('data-userStatus'); // pega atributo do form
+                event.preventDefault(); // prevent make a call to URL (in this case)
 
-                $('#editUserModal #name').val(name); // coloca o atributo na nodal
-                $('#editUserModal #email').val(email); // coloca o atributo na nodal
-                $('#editUserModal #address').val(address); // coloca o atributo na nodal
-                $('#editUserModal #userType').val(userType); // coloca o atributo na nodal
-                $('#editUserModal #admin').val(admin); // coloca o atributo na nodal
-                $('#editUserModal #userStatus').val(userStatus); // coloca o atributo na nodal
-                $('#editUserModal').modal(); // abre a modal manualmente
+                var id = $(this).attr('data-id'); // get form attribute
+                var name = $(this).attr('data-name');
+                var email = $(this).attr('data-email');
+                var address = $(this).attr('data-address');
+                var userType = $(this).attr('data-userType');
+                var admin = $(this).attr('data-admin');
+                var userStatus = $(this).attr('data-userStatus');
+
+                $('#editUserModal #userToEditId').val(id); // put the attribute in the modal
+                $('#editUserModal #name').val(name);
+                $('#editUserModal #email').val(email);
+                $('#editUserModal #address').val(address);
+                $('#editUserModal #userType').val(userType);
+                $('#editUserModal #admin').val(admin);
+                $('#editUserModal #userStatus').val(userStatus);
+                $('#editUserModal').modal(); // open the modal manually
             });
         });
 
@@ -146,14 +119,6 @@
             </li>
 
         </ul>
-        <!--        <form class="navbar-form form-inline navbar-right ml-auto">
-                    <div class="input-group search-box">
-                        <input type="text" class="form-control">
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-primary"><span>Search</span></button>
-                        </span>
-                    </div>
-                </form>-->
         <ul class="nav navbar-nav navbar-right ml-auto">
             <li class="nav-item dropdown">
                 <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action"><span
@@ -213,19 +178,13 @@
                 <td><span th:text="${user.admin}"></span></td>
                 <td><span th:text="${user.userStatus}"></span></td>
                 <td>
-                    <!--<a th:href="@{__${baseUrl}__/user/findOne/(id=${user.id})}" class="edit eBtn" data-toggle="modal"><i
-                            class="material-icons"
-                            data-toggle="tooltip" title="Editar">&#xE254;</i></a>-->
-                    <!--                    <a href="#editUserModal" class="edit userToEditId" data-toggle="modal" th:data="${user.id}"><i
-                                                class="material-icons"
-                                                data-toggle="tooltip" title="Editar">&#xE254;</i></a>-->
-
                     <a href="" class="edit userToEditId"
                        th:data-name="${user.name}" th:data-email="${user.email}" th:data-address="${user.addres()}"
-                       th:data-userType="${user.userType}" th:data-admin="${user.admin}" th:data-userStatus="${user.userStatus}" >
+                       th:data-userType="${user.userType}" th:data-admin="${user.admin}"
+                       th:data-userStatus="${user.userStatus}" th:data-id="${user.id}">
                         <i
-                            class="material-icons"
-                            data-toggle="tooltip" title="Editar">&#xE254;
+                                class="material-icons"
+                                data-toggle="tooltip" title="Editar">&#xE254;
                         </i>
                     </a>
 
@@ -364,83 +323,54 @@
 <div id="editUserModal" class="modal fade">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-
-            <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold text-secondary ml-5">Editar usuário</h4>
-                <button type="button" class="close text-secondary" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body mx-3">
-                <div class="md-form mb-5">
-                    <label data-error="wrong" data-success="right" for="name">Nome</label>
-                    <input type="text" id="name" name="name" class="form-control validate" required>
+            <form method="POST" th:action="@{/user/edit}">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold text-secondary ml-5">Editar usuário</h4>
+                    <button type="button" class="close text-secondary" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-
-                <div class="md-form mb-5">
-                    <label data-error="wrong" data-success="right" for="email">Email</label>
-                    <input type="text" id="email" name="email" class="form-control validate" required>
-                </div>
-
-                <div class="md-form mb-5">
-                    <label data-error="wrong" data-success="right" for="address">Endereço</label>
-                    <input type="text" id="address" name="address" class="form-control validate" required>
-                </div>
-
-                <div class="md-form mb-5">
-                    <label data-error="wrong" data-success="right">Tipo de usuário</label>
-                    <br class="input-group mb-2 mr-sm-2 mb-sm-0">
-                    <div class="modal-body">
-                        <input class="radio-inline" type="radio" value="ALUNO"
-                               name="userType" required checked>
-                        <label class="form-check-label">
-                            Aluno
-                        </label>
+                <div class="modal-body mx-3">
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="name">Nome</label>
+                        <input type="text" id="name" name="name" class="form-control validate" required>
                     </div>
-                    <div class="modal-body">
-                        <input class="radio-inline" type="radio" value="SERVIDOR"
-                               name="userType">
-                        <label class="form-check-label">
-                            Servidor
-                        </label>
+
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="email">Email</label>
+                        <input type="text" id="email" name="email" class="form-control validate" required>
+                    </div>
+
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="address">Endereço</label>
+                        <input type="text" id="address" name="address" class="form-control validate" required>
+                    </div>
+
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="name">Tipo de usuário</label>
+                        <input type="text" id="userType" name="userType" class="form-control validate" required>
+                    </div>
+
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="name">Admin?</label>
+                        <input type="text" id="admin" name="admin" class="form-control validate" required>
+                    </div>
+
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="name">Status</label>
+                        <input type="text" id="userStatus" name="userStatus" class="form-control validate" required>
                     </div>
                 </div>
 
-                <div class="md-form mb-5">
-                    <label data-error="wrong" data-success="right">Admin?</label>
-                    <br class="input-group mb-2 mr-sm-2 mb-sm-0">
-                    <div class="form-check">
-                        <select name="admin" required>
-                            <option class="form-select-button" name="SIM" value="SIM" selected>Sim</option>
-                            <option name="NAO" value="NAO">Não</option>
-                        </select>
-                    </div>
 
-                    </br>
+                <div class="modal-footer d-flex justify-content-center editInsideWrapper">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-success" value="Salvar">
+
+                    <input id="userToEditId" name="userToEditId" type="hidden" value=""/>
+                    <div id="result"></div>
                 </div>
-
-                <div class="md-form mb-5">
-                    <label data-error="wrong" data-success="right">Status</label>
-                    <br class="input-group mb-2 mr-sm-2 mb-sm-0">
-                    <div class="form-check">
-                        <select name="userStatus" required>
-                            <option class="form-select-button" name="ATIVO" value="ATIVO" selected>Sim</option>
-                            <option name="INATIVO" value="INATIVO">Não</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="modal-footer d-flex justify-content-center editInsideWrapper">
-                <!--     <button type="submit" class="btn btn-outline-secondary btn-block editInside" data-dismiss="modal"> Editar
-                         usuário</button>-->
-                <!--                            <input type="submit" class="btn btn-info" data-dismiss="modal" value="Salvar">-->
-                <input type="submit" class="btn btn-outline-secondary btn-block editInside"
-                       value="Editar usuário">
-                <input id="userToEditId" name="userToEditId" type="hidden" value=""/>
-                <div id="result"></div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

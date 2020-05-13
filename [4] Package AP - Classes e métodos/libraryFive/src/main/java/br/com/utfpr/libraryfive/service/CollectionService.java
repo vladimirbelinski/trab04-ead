@@ -1,8 +1,8 @@
 package br.com.utfpr.libraryfive.service;
 
-import br.com.utfpr.libraryfive.model.AuthorModel;
 import br.com.utfpr.libraryfive.model.CollectionModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface CollectionService {
@@ -21,6 +21,8 @@ public interface CollectionService {
 
     List<CollectionModel> findAllAvailableCollection();
 
+    CollectionModel findById(Integer id);
+
     CollectionModel findByTitle(String title);
 
     CollectionModel findByType(String type);
@@ -28,4 +30,6 @@ public interface CollectionService {
     List<CollectionModel> showCollectionInfo();
 
     boolean isAvailable(CollectionModel collection, Integer quantity);
+
+    CollectionModel getCollectionByRegisterForm(HttpServletRequest request, Boolean isNewCollection);
 }

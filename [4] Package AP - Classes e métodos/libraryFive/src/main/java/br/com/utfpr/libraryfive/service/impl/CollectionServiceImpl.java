@@ -3,10 +3,12 @@ package br.com.utfpr.libraryfive.service.impl;
 import br.com.utfpr.libraryfive.DAO.CollectionDao;
 import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.service.CollectionService;
+import br.com.utfpr.libraryfive.util.FormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service("collectionService")
@@ -15,6 +17,9 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Autowired
     private CollectionDao collectionDao;
+
+    @Autowired
+    private FormatUtils formatUtils;
 
     @Override
     public void createCollection(CollectionModel collection) {
@@ -58,6 +63,11 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
+    public CollectionModel findById(Integer id) {
+        return null;
+    }
+
+    @Override
     public CollectionModel findByTitle(String title) {
         return collectionDao.findByTitle(title);
     }
@@ -75,5 +85,37 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public boolean isAvailable(CollectionModel collection, Integer quantity) {
         return collectionDao.isAvailable(collection, quantity);
+    }
+
+    @Override
+    public CollectionModel getCollectionByRegisterForm(HttpServletRequest request, Boolean isNewCollection) {
+
+        CollectionModel collectionModel = new CollectionModel();
+
+        if (isNewCollection) {
+            collectionModel.setTitle(request.getParameter("title"));
+            collectionModel.setPublicationYear(formatUtils.getIntegerValue(request.getParameter("publicationYear")));
+            collectionModel.setCollectionType(getCollectionType(request.getParameter("collectionType")));
+
+        } else {
+            collectionModel = findById(formatUtils.getIntegerValue(request.getParameter("collectionToEditId")));
+
+            collectionModel.setTitle(request.getParameter("title"));
+            collectionModel.setPublicationYear(formatUtils.getIntegerValue(request.getParameter("publicationYear")));
+            collectionModel.setCollectionType(getCollectionType(request.getParameter("collectionType")));
+        }
+        return collectionModel;
+    }
+
+    private CollectionModel.CollectionType getCollectionType(String parameter) {
+
+        if (parameter.equals(CollectionModel.CollectionType.Literatura)) {
+            return CollectionModel.CollectionType.Literatura;
+        } else if (parameter.equals(CollectionModel.CollectionType.TeseMonografia)) {
+            return CollectionModel.CollectionType.TeseMonografia;
+        } else if (parameter.equals(CollectionModel.CollectionType.Outros)) {
+            return CollectionModel.CollectionType.Outros;
+        }
+        return null;
     }
 }

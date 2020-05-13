@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,6 @@ public class CollectionController extends AbstractController {
     @Autowired
     private Session session;
 
-    // listar
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView showCollection(){
 
@@ -55,23 +56,52 @@ public class CollectionController extends AbstractController {
         return null;
     }
 
-    // cadastrar
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public ModelAndView createCollection(@ModelAttribute("collection") CollectionModel collection,
-                                         @ModelAttribute("collectionCopy") CollectionCopyModel collectionCopy,
-                                         @ModelAttribute("author") AuthorModel author) {
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public String createCollection(final HttpServletRequest request) {
 
-        collectionService.createCollection(collection);
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
 
-        ModelAndView modelAndView = new ModelAndView("collection/collectionNew");
-        modelAndView.addObject("collection", new CollectionModel());
+        if (isAdmin) {
+            CollectionModel collection = collectionService.getCollectionByRegisterForm(request, true);
 
-        return modelAndView;
+            if (collection != null) {
+                collectionService.createCollection(collection);
+
+                return REDIRECT_TO_ADMIN_VIEW_COLLECTIONS;
+            }
+        }
+        // retorna erro
+        return null;
     }
 
-    // deletar
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String editCollection(final HttpServletRequest request) {
+
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            CollectionModel collection =  collectionService.getCollectionByRegisterForm(request, false);
+
+            collectionService.editCollection(collection);
+
+            return REDIRECT_TO_ADMIN_VIEW_COLLECTIONS;
+        }
+        // retorna erro
+        return null;
+    }
+
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String deleteCollection(){
-        return "collection/ok";
+    public String deleteCollection(@RequestParam("id") final int id){
+
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            CollectionModel collection =  collectionService.findById(id);
+            collectionService.deleteCollection(collection);
+
+            return REDIRECT_TO_ADMIN_VIEW_COLLECTIONS;
+        }
+        // retorna erro
+        return null;
     }
 }

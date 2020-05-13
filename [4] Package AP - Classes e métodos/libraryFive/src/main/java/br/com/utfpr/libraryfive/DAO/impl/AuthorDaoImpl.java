@@ -2,9 +2,12 @@ package br.com.utfpr.libraryfive.DAO.impl;
 
 import br.com.utfpr.libraryfive.DAO.AuthorDao;
 import br.com.utfpr.libraryfive.model.AuthorModel;
+import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.model.UserModel;
+import br.com.utfpr.libraryfive.service.CollectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,9 @@ import java.util.List;
 public class AuthorDaoImpl implements AuthorDao {
 
     static final Logger LOG = LoggerFactory.getLogger(AuthorDaoImpl.class);
+
+    @Autowired
+    private CollectionService collectionService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -55,13 +61,31 @@ public class AuthorDaoImpl implements AuthorDao {
     }
 
     @Override
+    public AuthorModel findByCollectionTitle(String collectionTitle) {
+        LOG.info("findByCollectionTitle started!");
+
+       CollectionModel collection = collectionService.findByTitle(collectionTitle);
+
+        List<AuthorModel> authors = acabei d
+
+        if (authors.isEmpty()) {
+//            LOG.info("The author " + id + " doesn't exist!");
+
+            return null;
+        }
+
+        LOG.info("Success! Author with name " + authors.get(0).getName() + " found!");
+        return authors.get(0);
+    }
+
+    @Override
     public void createAuthor(AuthorModel author) {
         entityManager.persist(author);
     }
 
     @Override
     public void editAuthor(AuthorModel author) {
-
+        entityManager.merge(author);
     }
 
     @Override

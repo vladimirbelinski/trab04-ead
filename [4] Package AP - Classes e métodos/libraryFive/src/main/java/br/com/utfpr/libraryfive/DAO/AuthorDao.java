@@ -10,6 +10,8 @@ public interface AuthorDao {
 
     AuthorModel findById(Integer id);
 
+    AuthorModel findByCollectionTitle(String collectionTitle);
+
     void createAuthor(AuthorModel author);
 
     void editAuthor(AuthorModel author);

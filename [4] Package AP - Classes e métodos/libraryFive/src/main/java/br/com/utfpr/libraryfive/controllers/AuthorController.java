@@ -46,6 +46,23 @@ public class AuthorController extends AbstractController {
         return null;
     }
 
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String editAuthor(final HttpServletRequest request) {
+
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            AuthorModel author = authorService.findById(Integer.valueOf(request.getParameter("authorToEditId")));
+            author.setName(request.getParameter("name"));
+
+            authorService.editAuthor(author);
+
+            return REDIRECT_TO_ADMIN_VIEW_AUTHORS;
+        }
+        // retorna erro
+        return null;
+    }
+
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String deleteAuthor(@RequestParam("id") final int id) {
 

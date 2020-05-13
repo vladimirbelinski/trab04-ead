@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="ctx" th:content="${#httpServletRequest.getContextPath()}"/>
-    <title>Admin - Manage users</title>
+    <title>Admin - Manage authors</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -54,14 +54,17 @@
             });
         });
 
-
+        // Edit author
         $(document).ready(function () {
-            $('.userToEditId').on('click', function (event) {
-                event.preventDefault(); // ???
-                var name = $(this).attr('data-name'); // pega atributo do form
+            $('.authorToEditId').on('click', function (event) {
+                event.preventDefault(); // prevent make a call to URL (in this case)
 
-                $('#editAuthorModal #name').val(name); // coloca o atributo na nodal
-                $('#editAuthorModal').modal(); // abre a modal manualmente
+                var id = $(this).attr('data-id'); // get form attribute
+                var name = $(this).attr('data-name');
+
+                $('#editAuthorModal #authorToEditId').val(id); // put the attribute in the modal
+                $('#editAuthorModal #name').val(name);
+                $('#editAuthorModal').modal(); // open the modal manually
             });
         });
 
@@ -106,14 +109,6 @@
             </li>
 
         </ul>
-        <!--        <form class="navbar-form form-inline navbar-right ml-auto">
-                    <div class="input-group search-box">
-                        <input type="text" class="form-control">
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-primary"><span>Search</span></button>
-                        </span>
-                    </div>
-                </form>-->
         <ul class="nav navbar-nav navbar-right ml-auto">
             <li class="nav-item dropdown">
                 <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action"><span
@@ -151,7 +146,7 @@
                 </div>
             </div>
         </div>
-        <table class="table table-striped" id="usersTable">
+        <table class="table table-striped" id="authorsTable">
             <thead>
             <tr>
                 <th>ID</th>
@@ -164,8 +159,8 @@
                 <td><span th:text="${author.id}"></span></td>
                 <td><span th:text="${author.name}"></span></td>
                 <td>
-                    <a href="" class="edit userToEditId"
-                       th:data-name="${author.name}" >
+                    <a href="" class="edit authorToEditId"
+                       th:data-name="${author.name}" th:data-id="${author.id}">
                         <i
                                 class="material-icons"
                                 data-toggle="tooltip" title="Editar">&#xE254;
@@ -213,28 +208,30 @@
 <div id="editAuthorModal" class="modal fade">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
+            <form method="POST" th:action="@{/author/edit}">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold text-secondary ml-5">Editar autor</h4>
+                    <button type="button" class="close text-secondary" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="name">Nome</label>
+                        <input type="text" id="name" name="name" class="form-control validate" required>
+                    </div>
 
-            <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold text-secondary ml-5">Editar autor</h4>
-                <button type="button" class="close text-secondary" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body mx-3">
-                <div class="md-form mb-5">
-                    <label data-error="wrong" data-success="right" for="name">Nome</label>
-                    <input type="text" id="name" name="name" class="form-control validate" required>
                 </div>
 
-            </div>
 
+                <div class="modal-footer d-flex justify-content-center editInsideWrapper">
+                    <input type="submit" class="btn btn-outline-secondary btn-block editInside"
+                           value="Editar autor">
 
-            <div class="modal-footer d-flex justify-content-center editInsideWrapper">
-                <input type="submit" class="btn btn-outline-secondary btn-block editInside"
-                       value="Editar autor">
-                <input id="userToEditId" name="userToEditId" type="hidden" value=""/>
-                <div id="result"></div>
-            </div>
+                    <input id="authorToEditId" name="authorToEditId" type="hidden" value=""/>
+                    <div id="result"></div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

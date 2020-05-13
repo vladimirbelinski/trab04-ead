@@ -1,6 +1,7 @@
 package br.com.utfpr.libraryfive.DAO.impl;
 
 import br.com.utfpr.libraryfive.DAO.CollectionDao;
+import br.com.utfpr.libraryfive.model.AuthorModel;
 import br.com.utfpr.libraryfive.model.CollectionCopyModel;
 import br.com.utfpr.libraryfive.model.CollectionModel;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class CollectionDaoImpl implements CollectionDao {
 
     @Override
     public void editCollection(CollectionModel collection) {
-
+        entityManager.merge(collection);
     }
 
     @Override
@@ -39,7 +40,13 @@ public class CollectionDaoImpl implements CollectionDao {
 
     @Override
     public void deleteCollection(CollectionModel collection) {
-
+        LOG.info("deleteCollection started!");
+        try {
+            entityManager.remove(collection);
+            LOG.info("Collection success deleted!");
+        } catch (NoResultException e) {
+            LOG.info("Collection delete fail, because " + e.getMessage());
+        }
     }
 
     @Override
@@ -82,8 +89,39 @@ public class CollectionDaoImpl implements CollectionDao {
     }
 
     @Override
+    public CollectionModel findById(Integer id) {
+        LOG.info("findById started!");
+
+        List<CollectionModel> collections = entityManager.createQuery("select c from CollectionModel c where c.id = :id", CollectionModel.class)
+                .setParameter("id", id)
+                .getResultList();
+
+        if (collections.isEmpty()) {
+            LOG.info("The author " + id + " doesn't exist!");
+
+            return null;
+        }
+
+        LOG.info("Success! Collection with ID " + collections.get(0).getId() + " found!");
+        return collections.get(0);
+    }
+
+    @Override
     public CollectionModel findByTitle(String title) {
-        return null;
+        LOG.info("findById started!");
+
+        List<CollectionModel> collections = entityManager.createQuery("select c from CollectionModel c where c.title = :title", CollectionModel.class)
+                .setParameter("title", title)
+                .getResultList();
+
+        if (collections.isEmpty()) {
+            LOG.info("The collection " + title + " doesn't exist!");
+
+            return null;
+        }
+
+        LOG.info("Success! Collection with title " + collections.get(0).getTitle() + " found!");
+        return collections.get(0);
     }
 
     @Override

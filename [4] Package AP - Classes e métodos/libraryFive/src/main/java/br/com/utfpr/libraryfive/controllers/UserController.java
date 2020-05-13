@@ -2,7 +2,6 @@ package br.com.utfpr.libraryfive.controllers;
 
 import br.com.utfpr.libraryfive.service.UserService;
 import br.com.utfpr.libraryfive.model.UserModel;
-import br.com.utfpr.libraryfive.populator.UserPopulator;
 import br.com.utfpr.libraryfive.util.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,6 @@ public class UserController extends AbstractController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    UserPopulator userPopulator;
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String newUser(final HttpServletRequest request) {

@@ -76,32 +76,6 @@ public class LoginController extends AbstractController {
         }
     }
 
-    @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public ModelAndView doSignup(@Valid UserModel user, BindingResult bindingResult) {
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        UserModel userExists = userService.findByEmail(user.getEmail());
-
-        if (userExists != null) {
-            bindingResult.rejectValue("email", "error.user", "This email already exists!");
-
-            LOG.warn("User with email " + user.getEmail() + " already exists!");
-        }
-
-        if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("login/signup.html");
-        } else {
-            userService.createUser(user);
-            modelAndView.addObject("msg", "User has been registered successfuly!");
-            modelAndView.addObject("user", new UserModel());
-            modelAndView.setViewName("login/signup.html");
-
-            LOG.info("User " + user.getEmail() + "success registered!");
-        }
-        return modelAndView;
-    }
-
     @RequestMapping(value= {"/access_denied"}, method=RequestMethod.GET)
     public ModelAndView accessDenied() {
         ModelAndView modelAndView = new ModelAndView();

@@ -74,7 +74,7 @@ public class AdminController {
             ModifiedCollection modifiedCollection = new ModifiedCollection();
             modifiedCollection.setId(collectionModel.getId());
             modifiedCollection.setTitle(collectionModel.getTitle());
-            modifiedCollection.setAuthor("teste");
+            modifiedCollection.setAuthor(authorService.findByCollectionTitle(collectionModel.getTitle()).getName());
             modifiedCollection.setType(collectionModel.getCollectionType().name());
 
             collections.add(modifiedCollection);

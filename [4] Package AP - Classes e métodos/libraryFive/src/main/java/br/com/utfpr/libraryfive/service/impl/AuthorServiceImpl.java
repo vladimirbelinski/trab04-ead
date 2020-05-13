@@ -27,13 +27,18 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public AuthorModel findByCollectionTitle(String collectionTitle) {
+        return authorDao.findByCollectionTitle(collectionTitle);
+    }
+
+    @Override
     public void createAuthor(AuthorModel author) {
         authorDao.createAuthor(author);
     }
 
     @Override
     public void editAuthor(AuthorModel author) {
-
+        authorDao.editAuthor(author);
     }
 
     @Override
