@@ -120,6 +120,7 @@
                 <th>#</th>
                 <th>Title</th>
                 <th>Author</th>
+                <th>Publication Year</th>
                 <th>Type</th>
                 <th>Actions</th>
             </tr>
@@ -129,6 +130,7 @@
                 <th><span th:text="${custStat.count}"></span></th>
                 <td><span th:text="${collection.title}"></span></td>
                 <td><span th:text="${collection.author}"></span></td>
+                <td><span th:text="${collection.publicationYear}"></span></td>
                 <td><span th:text="${collection.type}"></span></td>
                 <td>
                     <a href="#addNewLoan" class="btn btn-success collection_id" data-toggle="modal" th:data="${collection.title}"><i class="material-icons custom-color-add-button" data-toggle="tooltip" title="Novo empréstimo">&#xE147; </i>Empréstimo</a>

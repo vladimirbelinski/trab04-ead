@@ -65,7 +65,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = {"/manage/collections"}, method = RequestMethod.GET)
-    public ModelAndView manageCollections(ModelAndView modelAndView) {
+    public ModelAndView manageCollections(ModelAndView modelAndView, HttpServletRequest request) {
 
         List<CollectionModel> allCollections = collectionService.listAllCollections();
         List<ModifiedCollection> collections = new ArrayList<>();
@@ -74,16 +74,18 @@ public class AdminController {
             ModifiedCollection modifiedCollection = new ModifiedCollection();
             modifiedCollection.setId(collectionModel.getId());
             modifiedCollection.setTitle(collectionModel.getTitle());
-            modifiedCollection.setAuthor(authorService.findByCollectionTitle(collectionModel.getTitle()).getName());
+            modifiedCollection.setAuthor(authorService.findAuthorNameByCollectionTitle(collectionModel.getTitle()).getName());
+            modifiedCollection.setPublicationYear(collectionModel.getPublicationYear());
             modifiedCollection.setType(collectionModel.getCollectionType().name());
 
             collections.add(modifiedCollection);
         }
 
-        if (!allCollections.isEmpty()) {
+        if (!collections.isEmpty()) {
             modelAndView.setViewName("collection/collectionListAdmin");
             modelAndView.addObject("collections", collections);
             modelAndView.addObject("userName", session.getCurrentUser().getName());
+            modelAndView.addObject("baseUrl", session.getBaseUrl(request));
 
             LOG.info("Collections success retrieved!");
 

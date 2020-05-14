@@ -6,6 +6,11 @@ public class ModifiedCollection {
     String title;
     String author;
     String type;
+    Integer publicationYear;
+
+    public Integer getId() {
+        return id;
+    }
 
     public void setId(Integer id) {
         this.id = id;
@@ -35,4 +40,11 @@ public class ModifiedCollection {
         this.type = type;
     }
 
+    public Integer getPublicationYear() {
+        return publicationYear;
+    }
+
+    public void setPublicationYear(Integer publicationYear) {
+        this.publicationYear = publicationYear;
+    }
 }

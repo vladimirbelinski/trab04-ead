@@ -34,12 +34,36 @@
             });
         });
 
+        // Edit collection
         $(document).ready(function () {
-            $('body').on('click', '.collection_id',function(){
-                document.getElementById("collection_id").value = $(this).attr('data');
-                console.log($(this).attr('data-id'));
+            $('.collectionToEditId').on('click', function (event) {
+                event.preventDefault(); // prevent make a call to URL (in this case)
+
+                var id = $(this).attr('data-id'); // get form attribute
+                var title = $(this).attr('data-title');
+                var author = $(this).attr('data-author');
+                var year = $(this).attr('data-year');
+                var type = $(this).attr('data-type');
+
+                $('#editCollectionModal #userToEditId').val(id); // put the attribute in the modal
+                $('#editCollectionModal #title').val(title);
+                $('#editCollectionModal #authorName').val(author);
+                $('#editCollectionModal #publicationYear').val(year);
+                $('#editCollectionModal #collectionType').val(type);
+                $('#editCollectionModal').modal(); // open the modal manually
             });
         });
+
+        // Delete collection
+        $(document).ready(function () {
+            $('.table .delBtn').on('click', function (event) {
+                event.preventDefault();
+                var href = $(this).attr('href');
+                $('#deleteCollectionModal #delRef').attr('href', href);
+                $('#deleteCollectionModal').modal();
+            });
+        });
+
     </script>
 </head>
 <body>
@@ -109,6 +133,7 @@
                 <th>#</th>
                 <th>Title</th>
                 <th>Author</th>
+                <th>Publication Year</th>
                 <th>Type</th>
                 <th>Actions</th>
             </tr>
@@ -117,11 +142,13 @@
             <tr th:each="collection, custStat : ${collections}">
                 <th><span th:text="${custStat.count}"></span></th>
                 <td><span th:text="${collection.title}"></span></td>
-                <td><span th:text="${collection.getAuthorCollectionList().iterator().next().author}"></span></td>
+                <td><span th:text="${collection.author}"></span></td>
+                <td><span th:text="${collection.publicationYear}"></span></td>
                 <td><span th:text="${collection.type}"></span></td>
                 <td>
                     <a href="" class="edit collectionToEditId"
-                       th:data-name="${collection.title}" th:data-id="${collection.id}">
+                       th:data-title="${collection.title}" th:data-id="${collection.id}"
+                       th:data-author="${collection.author}" th:data-type="${collection.type}" th:data-year="${collection.publicationYear}">
                         <i
                                 class="material-icons"
                                 data-toggle="tooltip" title="Editar">&#xE254;
@@ -195,5 +222,72 @@
         </div>
     </div>
 </div>
+
+<!-- Edit collection Modal HTML -->
+<div id="editCollectionModal" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" th:action="@{/collection/edit}">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold text-secondary ml-5">Editar obra</h4>
+                    <button type="button" class="close text-secondary" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="title">Titulo</label>
+                        <input type="text" id="title" name="title" class="form-control validate" required>
+                    </div>
+
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="authorName">Autor</label>
+                        <input type="text" id="authorName" name="authorName" class="form-control validate" required>
+                    </div>
+
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="publicationYear">Ano de publicação</label>
+                        <input type="text" id="publicationYear" name="publicationYear" class="form-control validate" required>
+                    </div>
+
+                    <div class="md-form mb-5">
+                        <label data-error="wrong" data-success="right" for="collectionType">Tipo de obra</label>
+                        <input type="text" id="collectionType" name="collectionType" class="form-control validate" required>
+                    </div>
+                </div>
+
+
+                <div class="modal-footer d-flex justify-content-center editInsideWrapper">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-success" value="Salvar">
+
+                    <input id="collectionToEditId" name="collectionToEditId" type="hidden" value=""/>
+                    <div id="result"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete collection Modal HTML -->
+<div id="deleteCollectionModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Deletar obra</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Você tem certeza que quer deletar esta obra?</p>
+                <p class="text-warning"><small>Esta ação não poderá ser desfeita.</small></p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                <a href="" class="btn btn-danger" id="delRef">Deletar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

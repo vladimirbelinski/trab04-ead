@@ -1,6 +1,7 @@
 package br.com.utfpr.libraryfive.controllers;
 
 import br.com.utfpr.libraryfive.model.*;
+import br.com.utfpr.libraryfive.service.AuthorService;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.util.ModifiedCollection;
 import br.com.utfpr.libraryfive.util.Session;
@@ -28,6 +29,9 @@ public class CollectionController extends AbstractController {
     @Autowired
     private Session session;
 
+    @Autowired
+    AuthorService authorService;
+
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView showCollection(){
 
@@ -38,7 +42,8 @@ public class CollectionController extends AbstractController {
             ModifiedCollection modifiedCollection = new ModifiedCollection();
             modifiedCollection.setId(collectionModel.getId());
             modifiedCollection.setTitle(collectionModel.getTitle());
-            modifiedCollection.setAuthor("teste");
+            modifiedCollection.setAuthor(authorService.findAuthorNameByCollectionTitle(collectionModel.getTitle()).getName());
+            modifiedCollection.setPublicationYear(collectionModel.getPublicationYear());
             modifiedCollection.setType(collectionModel.getCollectionType().name());
 
             collections.add(modifiedCollection);

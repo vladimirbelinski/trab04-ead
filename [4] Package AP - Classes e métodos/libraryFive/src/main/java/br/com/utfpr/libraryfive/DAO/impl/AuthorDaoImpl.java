@@ -61,15 +61,17 @@ public class AuthorDaoImpl implements AuthorDao {
     }
 
     @Override
-    public AuthorModel findByCollectionTitle(String collectionTitle) {
-        LOG.info("findByCollectionTitle started!");
+    public AuthorModel findAuthorNameByCollectionTitle(String title) {
+        LOG.info("findAuthorNameByCollectionTitle started!");
 
-       CollectionModel collection = collectionService.findByTitle(collectionTitle);
-
-        List<AuthorModel> authors = acabei d
+        List<AuthorModel> authors = entityManager.createQuery("select a from AuthorModel a " +
+                " INNER JOIN a.authorCollectionList ac " +
+                " where ac.collection.title = :title")
+                .setParameter("title", title)
+                .getResultList();
 
         if (authors.isEmpty()) {
-//            LOG.info("The author " + id + " doesn't exist!");
+            LOG.info("The author for this title doesn't exist!");
 
             return null;
         }

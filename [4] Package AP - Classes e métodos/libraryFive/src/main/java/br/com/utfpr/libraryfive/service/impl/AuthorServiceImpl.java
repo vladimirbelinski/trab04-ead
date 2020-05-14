@@ -27,8 +27,8 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorModel findByCollectionTitle(String collectionTitle) {
-        return authorDao.findByCollectionTitle(collectionTitle);
+    public AuthorModel findAuthorNameByCollectionTitle(String title) {
+        return authorDao.findAuthorNameByCollectionTitle(title);
     }
 
     @Override

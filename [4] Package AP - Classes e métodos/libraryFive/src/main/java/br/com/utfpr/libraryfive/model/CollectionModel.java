@@ -17,7 +17,6 @@ public class CollectionModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Size(max = 6)
     @Column(name = "ID_OBRA")
     private Integer id;
 

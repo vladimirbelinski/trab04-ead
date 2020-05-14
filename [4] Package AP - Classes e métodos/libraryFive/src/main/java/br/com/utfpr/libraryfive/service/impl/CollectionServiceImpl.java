@@ -109,11 +109,11 @@ public class CollectionServiceImpl implements CollectionService {
 
     private CollectionModel.CollectionType getCollectionType(String parameter) {
 
-        if (parameter.equals(CollectionModel.CollectionType.Literatura)) {
+        if (parameter.equals(CollectionModel.CollectionType.Literatura.toString())) {
             return CollectionModel.CollectionType.Literatura;
-        } else if (parameter.equals(CollectionModel.CollectionType.TeseMonografia)) {
+        } else if (parameter.equals(CollectionModel.CollectionType.TeseMonografia.toString())) {
             return CollectionModel.CollectionType.TeseMonografia;
-        } else if (parameter.equals(CollectionModel.CollectionType.Outros)) {
+        } else if (parameter.equals(CollectionModel.CollectionType.Outros.toString())) {
             return CollectionModel.CollectionType.Outros;
         }
         return null;

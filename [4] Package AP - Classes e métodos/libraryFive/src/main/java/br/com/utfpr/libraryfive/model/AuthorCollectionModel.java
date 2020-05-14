@@ -21,4 +21,19 @@ public class AuthorCollectionModel implements Serializable {
     @JoinColumn(name = "ID_OBRA", foreignKey = @ForeignKey(name = "FK_AUTOR_OBRA"))
     private CollectionModel collection;
 
+    public AuthorModel getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(AuthorModel author) {
+        this.author = author;
+    }
+
+    public CollectionModel getCollection() {
+        return collection;
+    }
+
+    public void setCollection(CollectionModel collection) {
+        this.collection = collection;
+    }
 }
