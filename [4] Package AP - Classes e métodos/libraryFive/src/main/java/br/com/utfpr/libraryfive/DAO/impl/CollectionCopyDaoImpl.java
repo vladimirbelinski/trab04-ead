@@ -2,12 +2,14 @@ package br.com.utfpr.libraryfive.DAO.impl;
 
 import br.com.utfpr.libraryfive.DAO.CollectionCopyDao;
 import br.com.utfpr.libraryfive.model.CollectionCopyModel;
+import br.com.utfpr.libraryfive.model.CollectionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -23,6 +25,21 @@ public class CollectionCopyDaoImpl implements CollectionCopyDao {
     @Override
     public void createCollectionCopy(CollectionCopyModel collectionCopy) {
         entityManager.persist(collectionCopy);
+    }
+
+    @Override
+    public List<CollectionCopyModel> listAllCollectionCopy() {
+        LOG.info("listAllCollectionCopy started!");
+        List<CollectionCopyModel> collectionCopyList;
+
+        try {
+            collectionCopyList = entityManager. createQuery("select c from CollectionCopyModel c", CollectionCopyModel.class).
+                    getResultList();
+            LOG.info("Collection copies found!");
+        } catch (NoResultException e) {
+            collectionCopyList = null;
+        }
+        return collectionCopyList;
     }
 
     @Override

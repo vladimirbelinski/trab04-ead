@@ -1,13 +1,7 @@
 package br.com.utfpr.libraryfive.controllers;
 
-import br.com.utfpr.libraryfive.model.AuthorModel;
-import br.com.utfpr.libraryfive.model.CollectionModel;
-import br.com.utfpr.libraryfive.model.LoanModel;
-import br.com.utfpr.libraryfive.model.UserModel;
-import br.com.utfpr.libraryfive.service.AuthorService;
-import br.com.utfpr.libraryfive.service.CollectionService;
-import br.com.utfpr.libraryfive.service.LoanService;
-import br.com.utfpr.libraryfive.service.UserService;
+import br.com.utfpr.libraryfive.model.*;
+import br.com.utfpr.libraryfive.service.*;
 import br.com.utfpr.libraryfive.util.ModifiedCollection;
 import br.com.utfpr.libraryfive.util.Session;
 import org.slf4j.Logger;
@@ -35,6 +29,9 @@ public class AdminController {
 
     @Autowired
     CollectionService collectionService;
+
+    @Autowired
+    CollectionCopyService collectionCopyService;
 
     @Autowired
     LoanService loanService;
@@ -81,6 +78,9 @@ public class AdminController {
 
             collections.add(modifiedCollection);
         }
+
+        // Add a list of collection copy to display in second table
+        modelAndView.addObject("collectionCopyList", collectionCopyService.listAllCollectionCopy());
 
         if (!collections.isEmpty()) {
             modelAndView.setViewName("collection/collectionListAdmin");

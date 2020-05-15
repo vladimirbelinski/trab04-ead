@@ -55,6 +55,27 @@
             });
         });
 
+        // Search CC
+        $(document).ready(function () {
+            // Activate tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Filter table rows based on searched term
+            $("#searchCc").on("keyup", function () {
+                var term = $(this).val().toLowerCase();
+                $("table tbody tr").each(function () {
+                    $row = $(this);
+                    var name = $row.find("td:nth-child(2)").text().toLowerCase();
+                    console.log(name);
+                    if (name.search(term) < 0) {
+                        $row.hide();
+                    } else {
+                        $row.show();
+                    }
+                });
+            });
+        });
+
         // Edit collection
         $(document).ready(function () {
             $('.collectionToEditId').on('click', function (event) {
@@ -129,17 +150,21 @@
         </ul>
         <ul class="nav navbar-nav navbar-right ml-auto">
             <li class="nav-item dropdown">
-                <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action"><span th:utext="${userName}"></span><b class="caret"></b></a>
+                <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action"><span
+                        th:utext="${userName}"></span><b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a th:href="@{/user/myaccount}" class="dropdown-item"><i class="fa fa-user-o"></i> Minha conta</a></li>
+                    <li><a th:href="@{/user/myaccount}" class="dropdown-item"><i class="fa fa-user-o"></i> Minha
+                        conta</a></li>
                     <li class="divider dropdown-divider"></li>
-                    <li><a th:href="@{/logout}" class="dropdown-item"><i class="material-icons">&#xE8AC;</i> Logout</a></li>
+                    <li><a th:href="@{/logout}" class="dropdown-item"><i class="material-icons">&#xE8AC;</i> Logout</a>
+                    </li>
                 </ul>
             </li>
         </ul>
     </div>
 </nav>
 
+<!-- Collection -->
 <div class="container">
     <div class="table-wrapper">
         <div class="table-title">
@@ -180,8 +205,10 @@
                 <td><span th:text="${collection.publicationYear}"></span></td>
                 <td><span th:text="${collection.type}"></span></td>
                 <td>
-                    <span th:if="${collection.hasCollectionCopy == true}"><span class="status text-success">&bull;</span> Sim</span>
-                    <span th:if="${collection.hasCollectionCopy == false}"><span class="status text-warning">&bull;</span> Não</span>
+                    <span th:if="${collection.hasCollectionCopy == true}"><span
+                            class="status text-success">&bull;</span> Sim</span>
+                    <span th:if="${collection.hasCollectionCopy == false}"><span
+                            class="status text-warning">&bull;</span> Não</span>
                 </td>
                 <td>
                     <!-- add new collection copy -->
@@ -192,12 +219,96 @@
                     <!-- edit collection -->
                     <a href="" class="edit collectionToEditId"
                        th:data-title="${collection.title}" th:data-id="${collection.id}"
-                       th:data-author="${collection.author}" th:data-type="${collection.type}" th:data-year="${collection.publicationYear}">
+                       th:data-author="${collection.author}" th:data-type="${collection.type}"
+                       th:data-year="${collection.publicationYear}">
                         <i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i>
                     </a>
 
                     <!-- delete collection -->
                     <a th:href="@{__${baseUrl}__/collection/delete/(id=${collection.id})}" class="delete delBtn"
+                       data-toggle="modal">
+                        <i class="material-icons" data-toggle="tooltip" title="Deletar">&#xE872;</i>
+                    </a>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="clearfix">
+            <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+            <ul class="pagination paginationCustomized">
+                <li class="page-item disabled"><a href="#">Previous</a></li>
+                <li class="page-item"><a href="#" class="page-link">1</a></li>
+                <li class="page-item"><a href="#" class="page-link">2</a></li>
+                <li class="page-item active"><a href="#" class="page-link">3</a></li>
+                <li class="page-item"><a href="#" class="page-link">4</a></li>
+                <li class="page-item"><a href="#" class="page-link">5</a></li>
+                <li class="page-item"><a href="#" class="page-link">Next</a></li>
+            </ul>
+
+            <a class="collectionCopy" data-toggle="collapse" data-target="#collectionCopyList"><i
+                    class="material-icons">&#xe02f</i>
+                <span>Exibir exemplares</span></a>
+        </div>
+    </div>
+</div>
+
+<!-- Collection Copy -->
+<div id="collectionCopyList" class="collapse container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2><b>Exemplares</b></h2>
+                </div>
+                <div class="col-sm-6">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <input type="text" id="searchCc" class="form-control" placeholder="Procurar por nome">
+                            <span class="input-group-addon"><i class="material-icons">&#xE8B6;</i></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Publication Year</th>
+                <th>Type</th>
+                <th>#ID Collection copy</th>
+                <th>Acquisition date</th>
+                <th>Situation</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="collectionCopy, custStat : ${collectionCopyList}">
+                <th><span th:text="${custStat.count}"></span></th>
+                <!-- collection-->
+                <td><span th:text="${collectionCopy.collection.title}"></span></td>
+                <td><span th:text="${collectionCopy.collection.publicationYear}"></span></td>
+                <td><span th:text="${collectionCopy.collection.collectionType}"></span></td>
+                <!-- collection copy -->
+                <td><span th:text="${collectionCopy.id}"></span></td>
+                <td><span th:text="${collectionCopy.acquisitionDate}"></span></td>
+                <td><span th:text="${collectionCopy.collectionCopySituation}"></span></td>
+                <td>
+                    <!-- edit collection copy -->
+                    <a href="" class="edit collectionCopyToEditId"
+                       th:data-id="${collectionCopy.collection.id}" th:data-title="${collectionCopy.collection.title}"
+                       th:data-year="${collectionCopy.collection.publicationYear}" th:data-type="${collectionCopy.collection.collectionType}"
+                       th:data-ccId="${collectionCopy.id}"
+                       th:data-ccAcquisitionDate="${collectionCopy.acquisitionDate}"
+                       th:data-ccSituation="${collectionCopy.collectionCopySituation}">
+                        <i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i>
+                    </a>
+
+                    <!-- delete collection copy-->
+                    <a th:href="@{__${baseUrl}__/collection/copy/delete/(id=${collectionCopy.id})}"
+                       class="delete delCcBtn"
                        data-toggle="modal">
                         <i class="material-icons" data-toggle="tooltip" title="Deletar">&#xE872;</i>
                     </a>
@@ -258,7 +369,9 @@
                         <br class="input-group mb-2 mr-sm-2 mb-sm-0">
                         <div class="form-check">
                             <select name="collectionType" required>
-                                <option class="form-select-button" name="Literatura" value="Literatura" selected>Literatura</option>
+                                <option class="form-select-button" name="Literatura" value="Literatura" selected>
+                                    Literatura
+                                </option>
                                 <option name="Tese/Monografia" value="Tese/Monografia">Tese/Monografia</option>
                                 <option name="Outros" value="Outros">Outros</option>
                             </select>
@@ -300,12 +413,14 @@
 
                     <div class="md-form mb-5">
                         <label data-error="wrong" data-success="right" for="publicationYear">Ano de publicação</label>
-                        <input type="text" id="publicationYear" name="publicationYear" class="form-control validate" required>
+                        <input type="text" id="publicationYear" name="publicationYear" class="form-control validate"
+                               required>
                     </div>
 
                     <div class="md-form mb-5">
                         <label data-error="wrong" data-success="right" for="collectionType">Tipo de obra</label>
-                        <input type="text" id="collectionType" name="collectionType" class="form-control validate" required>
+                        <input type="text" id="collectionType" name="collectionType" class="form-control validate"
+                               required>
                     </div>
                 </div>
 
@@ -364,7 +479,9 @@
                         <br class="input-group mb-2 mr-sm-2 mb-sm-0">
                         <div class="form-check">
                             <select name="collectionCopySituation" required>
-                                <option class="form-select-button" name="Disponível" value="Disponível" selected>Disponível</option>
+                                <option class="form-select-button" name="Disponível" value="Disponível" selected>
+                                    Disponível
+                                </option>
                                 <option name="Emprestado" value="Emprestado">Emprestado</option>
                                 <option name="Devolvido" value="Devolvido">Devolvido</option>
                                 <option name="Reservado" value="Reservado">Reservado</option>
@@ -378,7 +495,7 @@
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
                     <input type="submit" class="btn btn-success" value="Adicionar">
 
-                    <input id="collectionId" name="collectionId" type="hidden" value="" />
+                    <input id="collectionId" name="collectionId" type="hidden" value=""/>
                 </div>
             </form>
         </div>

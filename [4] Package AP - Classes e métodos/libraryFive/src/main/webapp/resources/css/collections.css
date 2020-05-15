@@ -162,3 +162,12 @@ table.table td i {
 .text-success {
     color: #10c469;
 }
+
+.paginationCustomized {
+    display: block;
+}
+
+.collectionCopy {
+    display:flex;
+    justify-content: flex-end;
+}
