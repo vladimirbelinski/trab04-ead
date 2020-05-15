@@ -1,7 +1,10 @@
 package br.com.utfpr.libraryfive.service.impl;
 
 import br.com.utfpr.libraryfive.DAO.CollectionDao;
+import br.com.utfpr.libraryfive.model.AuthorCollectionModel;
+import br.com.utfpr.libraryfive.model.AuthorModel;
 import br.com.utfpr.libraryfive.model.CollectionModel;
+import br.com.utfpr.libraryfive.service.AuthorService;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.util.FormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 
 @Service("collectionService")
@@ -17,6 +21,9 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Autowired
     private CollectionDao collectionDao;
+
+    @Autowired
+    private AuthorService authorService;
 
     @Autowired
     private FormatUtils formatUtils;
@@ -64,7 +71,7 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Override
     public CollectionModel findById(Integer id) {
-        return null;
+        return collectionDao.findById(id);
     }
 
     @Override
@@ -91,16 +98,22 @@ public class CollectionServiceImpl implements CollectionService {
     public CollectionModel getCollectionByRegisterForm(HttpServletRequest request, Boolean isNewCollection) {
 
         CollectionModel collectionModel = new CollectionModel();
+        AuthorModel author = new AuthorModel();
 
         if (isNewCollection) {
+            author = authorService.findByName(request.getParameter("author"));
+
             collectionModel.setTitle(request.getParameter("title"));
+            collectionModel.setAuthorCollectionList(getAuthor(author));
             collectionModel.setPublicationYear(formatUtils.getIntegerValue(request.getParameter("publicationYear")));
             collectionModel.setCollectionType(getCollectionType(request.getParameter("collectionType")));
 
         } else {
             collectionModel = findById(formatUtils.getIntegerValue(request.getParameter("collectionToEditId")));
+            author = authorService.findByName(request.getParameter("authorName"));
 
             collectionModel.setTitle(request.getParameter("title"));
+            collectionModel.getAuthorCollectionList().iterator().next().setAuthor(author);
             collectionModel.setPublicationYear(formatUtils.getIntegerValue(request.getParameter("publicationYear")));
             collectionModel.setCollectionType(getCollectionType(request.getParameter("collectionType")));
         }
@@ -118,4 +131,12 @@ public class CollectionServiceImpl implements CollectionService {
         }
         return null;
     }
+
+    private List<AuthorCollectionModel> getAuthor(AuthorModel author) {
+        AuthorCollectionModel authorCollection = new AuthorCollectionModel();
+        authorCollection.setAuthor(author);
+
+        return Arrays.asList(authorCollection);
+    }
+
 }

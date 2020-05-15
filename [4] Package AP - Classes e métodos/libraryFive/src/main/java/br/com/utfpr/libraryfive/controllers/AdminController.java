@@ -74,9 +74,10 @@ public class AdminController {
             ModifiedCollection modifiedCollection = new ModifiedCollection();
             modifiedCollection.setId(collectionModel.getId());
             modifiedCollection.setTitle(collectionModel.getTitle());
-            modifiedCollection.setAuthor(authorService.findAuthorNameByCollectionTitle(collectionModel.getTitle()).getName());
+            modifiedCollection.setAuthor(getAuthor(collectionModel));
             modifiedCollection.setPublicationYear(collectionModel.getPublicationYear());
             modifiedCollection.setType(collectionModel.getCollectionType().name());
+            modifiedCollection.setHasCollectionCopy(collectionModel.getCollectionCopyList().isEmpty() ? false : true);
 
             collections.add(modifiedCollection);
         }
@@ -84,6 +85,7 @@ public class AdminController {
         if (!collections.isEmpty()) {
             modelAndView.setViewName("collection/collectionListAdmin");
             modelAndView.addObject("collections", collections);
+            modelAndView.addObject("authors", authorService.listAllAuthors());
             modelAndView.addObject("userName", session.getCurrentUser().getName());
             modelAndView.addObject("baseUrl", session.getBaseUrl(request));
 
@@ -131,5 +133,9 @@ public class AdminController {
         }
         // retorna erro
         return null;
+    }
+
+    private String getAuthor(CollectionModel collectionModel) {
+        return authorService.findAuthorNameByCollectionTitle(collectionModel.getTitle()) != null ? authorService.findAuthorNameByCollectionTitle(collectionModel.getTitle()).getName() : "" ;
     }
 }

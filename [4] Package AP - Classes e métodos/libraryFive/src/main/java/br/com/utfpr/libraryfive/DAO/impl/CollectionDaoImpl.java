@@ -60,8 +60,7 @@ public class CollectionDaoImpl implements CollectionDao {
         List<CollectionModel> collections;
 
         try {
-            collections = entityManager. createQuery("select c from CollectionModel c" +
-                    " INNER JOIN c.collectionCopyList cp").
+            collections = entityManager. createQuery("select c from CollectionModel c", CollectionModel.class).
                     getResultList();
             LOG.info("Collections found!");
         } catch (NoResultException e) {

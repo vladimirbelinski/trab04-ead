@@ -1,7 +1,9 @@
 package br.com.utfpr.libraryfive.service.impl;
 
 import br.com.utfpr.libraryfive.DAO.AuthorDao;
+import br.com.utfpr.libraryfive.model.AuthorCollectionModel;
 import br.com.utfpr.libraryfive.model.AuthorModel;
+import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public AuthorModel findByName(String name) {
+        return authorDao.findByName(name);
+    }
+
+    @Override
     public AuthorModel findAuthorNameByCollectionTitle(String title) {
         return authorDao.findAuthorNameByCollectionTitle(title);
     }
@@ -44,5 +51,14 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void deleteAuthor(AuthorModel author) {
         authorDao.deleteAuthor(author);
+    }
+
+    @Override
+    public void createAuthorCollection(CollectionModel collection) {
+        AuthorCollectionModel authorCollectionModel = new AuthorCollectionModel();
+        authorCollectionModel.setAuthor(collection.getAuthorCollectionList().iterator().next().getAuthor());
+        authorCollectionModel.setCollection(collection);
+
+         authorDao.createAuthorCollection(authorCollectionModel);
     }
 }

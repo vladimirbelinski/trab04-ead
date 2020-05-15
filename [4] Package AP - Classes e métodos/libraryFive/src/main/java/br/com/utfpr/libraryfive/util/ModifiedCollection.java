@@ -7,6 +7,7 @@ public class ModifiedCollection {
     String author;
     String type;
     Integer publicationYear;
+    Boolean hasCollectionCopy;
 
     public Integer getId() {
         return id;
@@ -46,5 +47,13 @@ public class ModifiedCollection {
 
     public void setPublicationYear(Integer publicationYear) {
         this.publicationYear = publicationYear;
+    }
+
+    public Boolean getHasCollectionCopy() {
+        return hasCollectionCopy;
+    }
+
+    public void setHasCollectionCopy(Boolean hasCollectionCopy) {
+        this.hasCollectionCopy = hasCollectionCopy;
     }
 }

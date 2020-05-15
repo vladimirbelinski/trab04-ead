@@ -7,4 +7,6 @@ public interface CollectionCopyDao {
     void createCollectionCopy(CollectionCopyModel collectionCopy);
 
     void findCollectionCopyByCollectionTitle(String collectionTitle);
+
+    CollectionCopyModel findById(Integer id);
 }

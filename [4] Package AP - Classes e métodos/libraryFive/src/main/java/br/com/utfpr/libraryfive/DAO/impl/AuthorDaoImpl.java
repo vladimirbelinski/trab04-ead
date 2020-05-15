@@ -1,9 +1,8 @@
 package br.com.utfpr.libraryfive.DAO.impl;
 
 import br.com.utfpr.libraryfive.DAO.AuthorDao;
+import br.com.utfpr.libraryfive.model.AuthorCollectionModel;
 import br.com.utfpr.libraryfive.model.AuthorModel;
-import br.com.utfpr.libraryfive.model.CollectionModel;
-import br.com.utfpr.libraryfive.model.UserModel;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +60,24 @@ public class AuthorDaoImpl implements AuthorDao {
     }
 
     @Override
+    public AuthorModel findByName(String name) {
+        LOG.info("findByName started!");
+
+        List<AuthorModel> users = entityManager.createQuery("select a from AuthorModel a where a.name = :name", AuthorModel.class)
+                .setParameter("name", name)
+                .getResultList();
+
+        if (users.isEmpty()) {
+            LOG.info("The author " + name + " doesn't exist!");
+
+            return null;
+        }
+
+        LOG.info("Success! Author with name " + users.get(0).getName() + " found!");
+        return users.get(0);
+    }
+
+    @Override
     public AuthorModel findAuthorNameByCollectionTitle(String title) {
         LOG.info("findAuthorNameByCollectionTitle started!");
 
@@ -99,5 +116,10 @@ public class AuthorDaoImpl implements AuthorDao {
         } catch (NoResultException e) {
             LOG.info("Author delete fail, because " + e.getMessage());
         }
+    }
+
+    @Override
+    public void createAuthorCollection(AuthorCollectionModel authorCollection) {
+        entityManager.persist(authorCollection);
     }
 }

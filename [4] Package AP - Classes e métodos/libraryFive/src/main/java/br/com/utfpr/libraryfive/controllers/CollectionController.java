@@ -2,6 +2,7 @@ package br.com.utfpr.libraryfive.controllers;
 
 import br.com.utfpr.libraryfive.model.*;
 import br.com.utfpr.libraryfive.service.AuthorService;
+import br.com.utfpr.libraryfive.service.CollectionCopyService;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.util.ModifiedCollection;
 import br.com.utfpr.libraryfive.util.Session;
@@ -25,6 +26,9 @@ public class CollectionController extends AbstractController {
 
     @Autowired
     private CollectionService collectionService;
+
+    @Autowired
+    private CollectionCopyService collectionCopyService;
 
     @Autowired
     private Session session;
@@ -72,6 +76,9 @@ public class CollectionController extends AbstractController {
             if (collection != null) {
                 collectionService.createCollection(collection);
 
+                // create in DB and connect collection with author (AuthorCollection)
+                authorService.createAuthorCollection(collection);
+
                 return REDIRECT_TO_ADMIN_VIEW_COLLECTIONS;
             }
         }
@@ -105,6 +112,24 @@ public class CollectionController extends AbstractController {
             collectionService.deleteCollection(collection);
 
             return REDIRECT_TO_ADMIN_VIEW_COLLECTIONS;
+        }
+        // retorna erro
+        return null;
+    }
+
+    @RequestMapping(value = "/copy/new", method = RequestMethod.POST)
+    public String createCollectionCopy(final HttpServletRequest request) {
+
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            CollectionCopyModel collectionCopy = collectionCopyService.getCollectionCopyByRegisterForm(request, true);
+
+            if (collectionCopy != null) {
+                collectionCopyService.createCollectionCopy(collectionCopy);
+
+                return REDIRECT_TO_ADMIN_VIEW_COLLECTIONS;
+            }
         }
         // retorna erro
         return null;
