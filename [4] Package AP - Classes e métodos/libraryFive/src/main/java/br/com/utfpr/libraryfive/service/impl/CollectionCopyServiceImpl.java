@@ -36,6 +36,16 @@ public class CollectionCopyServiceImpl implements CollectionCopyService {
     }
 
     @Override
+    public void editCollectionCopy(CollectionCopyModel collectionCopy) {
+        collectionCopyDao.editCollectionCopy(collectionCopy);
+    }
+
+    @Override
+    public void deleteCollectionCopy(CollectionCopyModel collectionCopy) {
+        collectionCopyDao.deleteCollectionCopy(collectionCopy);
+    }
+
+    @Override
     public List<CollectionCopyModel> listAllCollectionCopy() {
         return collectionCopyDao.listAllCollectionCopy();
     }
@@ -48,16 +58,17 @@ public class CollectionCopyServiceImpl implements CollectionCopyService {
 
     @Override
     public CollectionCopyModel findById(Integer id) {
-        return null;
+        return collectionCopyDao.findById(id);
     }
 
     @Override
     public CollectionCopyModel getCollectionCopyByRegisterForm(HttpServletRequest request, Boolean isNewCollectionCopy) {
 
         CollectionCopyModel collectionCopyModel = new CollectionCopyModel();
-        CollectionModel collection = collectionService.findById(formatUtils.getIntegerValue(request.getParameter("collectionId")));
 
         if (isNewCollectionCopy) {
+            CollectionModel collection = collectionService.findById(formatUtils.getIntegerValue(request.getParameter("collectionId")));
+
             collectionCopyModel.setCollection(collection);
             collectionCopyModel.setAcquisitionDate(dateUtils.convertDate(request.getParameter("acquisitionDate")));
             collectionCopyModel.setCollectionCopySituation(getCollectionCopySituation(request.getParameter("collectionCopySituation")));

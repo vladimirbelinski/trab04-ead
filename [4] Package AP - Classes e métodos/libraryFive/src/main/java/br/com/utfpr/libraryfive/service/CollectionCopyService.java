@@ -10,6 +10,10 @@ public interface CollectionCopyService {
 
     void createCollectionCopy(CollectionCopyModel collectionCopy);
 
+    void editCollectionCopy(CollectionCopyModel collectionCopy);
+
+    void deleteCollectionCopy(CollectionCopyModel collectionCopy);
+
     List<CollectionCopyModel> listAllCollectionCopy();
 
     CollectionCopyModel findById(Integer id);

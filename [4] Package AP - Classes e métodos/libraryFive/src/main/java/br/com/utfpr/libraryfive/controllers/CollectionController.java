@@ -133,4 +133,35 @@ public class CollectionController extends AbstractController {
         // retorna erro
         return null;
     }
+
+    @RequestMapping(value = "/copy/edit", method = RequestMethod.POST)
+    public String editCollectionCopy(final HttpServletRequest request) {
+
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            CollectionCopyModel collectionCopy = collectionCopyService.getCollectionCopyByRegisterForm(request, false);
+
+            collectionCopyService.editCollectionCopy(collectionCopy);
+
+            return REDIRECT_TO_ADMIN_VIEW_COLLECTIONS;
+        }
+        // retorna erro
+        return null;
+    }
+
+    @RequestMapping(value = "/copy/delete", method = RequestMethod.GET)
+    public String deleteCollectionCopy(@RequestParam("id") final int id){
+
+        Boolean isAdmin = session.getCurrentUser().getAdmin();
+
+        if (isAdmin) {
+            CollectionCopyModel collectionCopy = collectionCopyService.findById(id);
+            collectionCopyService.deleteCollectionCopy(collectionCopy);
+
+            return REDIRECT_TO_ADMIN_VIEW_COLLECTIONS;
+        }
+        // retorna erro
+        return null;
+    }
 }

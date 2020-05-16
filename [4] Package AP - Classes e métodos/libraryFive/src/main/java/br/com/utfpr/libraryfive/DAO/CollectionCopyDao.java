@@ -8,6 +8,10 @@ public interface CollectionCopyDao {
 
     void createCollectionCopy(CollectionCopyModel collectionCopy);
 
+    void editCollectionCopy(CollectionCopyModel collectionCopy);
+
+    void deleteCollectionCopy(CollectionCopyModel collectionCopy);
+
     List<CollectionCopyModel> listAllCollectionCopy();
 
     void findCollectionCopyByCollectionTitle(String collectionTitle);

@@ -2,7 +2,6 @@ package br.com.utfpr.libraryfive.DAO.impl;
 
 import br.com.utfpr.libraryfive.DAO.CollectionCopyDao;
 import br.com.utfpr.libraryfive.model.CollectionCopyModel;
-import br.com.utfpr.libraryfive.model.CollectionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -25,6 +24,22 @@ public class CollectionCopyDaoImpl implements CollectionCopyDao {
     @Override
     public void createCollectionCopy(CollectionCopyModel collectionCopy) {
         entityManager.persist(collectionCopy);
+    }
+
+    @Override
+    public void editCollectionCopy(CollectionCopyModel collectionCopy) {
+        entityManager.merge(collectionCopy);
+    }
+
+    @Override
+    public void deleteCollectionCopy(CollectionCopyModel collectionCopy) {
+        LOG.info("deleteCollectionCopy started!");
+        try {
+            entityManager.remove(collectionCopy);
+            LOG.info("Collection copy success deleted!");
+        } catch (NoResultException e) {
+            LOG.info("Collection copy delete fail, because " + e.getMessage());
+        }
     }
 
     @Override
