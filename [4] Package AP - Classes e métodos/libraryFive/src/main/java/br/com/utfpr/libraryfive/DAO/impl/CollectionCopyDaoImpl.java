@@ -58,11 +58,6 @@ public class CollectionCopyDaoImpl implements CollectionCopyDao {
     }
 
     @Override
-    public void findCollectionCopyByCollectionTitle(String collectionTitle) {
-
-    }
-
-    @Override
     public CollectionCopyModel findById(Integer id) {
         LOG.info("findById started!");
 

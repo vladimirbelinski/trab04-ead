@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface LoanDao {
 
-    void makeLoan(LocalDateTime actualDate, LocalDateTime dateToReturn, String collectionTitle, Integer quantity);
+    void makeLoan(LoanModel loan);
+
+    void deleteLoan(LoanModel loan);
 
     LoanModel findById(Integer id);
 

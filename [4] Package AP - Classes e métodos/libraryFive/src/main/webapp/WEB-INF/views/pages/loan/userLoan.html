@@ -25,6 +25,17 @@
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
         });
+
+        // Return collection copy
+        $(document).ready(function () {
+            $('.table .returnBtn').on('click', function (event) {
+                event.preventDefault();
+                var href = $(this).attr('href');
+                $('#returnLoanModal #returnRef').attr('href', href);
+                $('#returnLoanModal').modal();
+            });
+        });
+
     </script>
 </head>
 <body>
@@ -105,7 +116,7 @@
                 </td>
                 <td>
                     <a href="#" class="settings" title="Renovar" data-toggle="tooltip"><i class="material-icons">&#xe863</i></a>
-                    <a href="#" class="delete" title="Devolver" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
+                    <a th:href="@{__${baseUrl}__/loan/return/(id=${loan.id})}" class="delete returnBtn" title="Devolver" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
                 </td>
             </tr>
             </tbody>
@@ -122,6 +133,26 @@
                 <li class="page-item"><a href="#" class="page-link">5</a></li>
                 <li class="page-item"><a href="#" class="page-link">Next</a></li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Return collection copy Modal HTML -->
+<div id="returnLoanModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Devolver exemplar</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Você tem certeza que quer devolver este exemplar?</p>
+                <p class="text-warning"><small>Esta ação não poderá ser desfeita.</small></p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                <a href="" class="btn btn-danger" id="returnRef">Devolver</a>
+            </div>
         </div>
     </div>
 </div>

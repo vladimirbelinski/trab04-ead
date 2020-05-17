@@ -14,7 +14,5 @@ public interface CollectionCopyDao {
 
     List<CollectionCopyModel> listAllCollectionCopy();
 
-    void findCollectionCopyByCollectionTitle(String collectionTitle);
-
     CollectionCopyModel findById(Integer id);
 }

@@ -1,7 +1,6 @@
 package br.com.utfpr.libraryfive.DAO.impl;
 
 import br.com.utfpr.libraryfive.DAO.CollectionDao;
-import br.com.utfpr.libraryfive.model.AuthorModel;
 import br.com.utfpr.libraryfive.model.CollectionCopyModel;
 import br.com.utfpr.libraryfive.model.CollectionModel;
 import org.slf4j.Logger;
@@ -134,7 +133,26 @@ public class CollectionDaoImpl implements CollectionDao {
     }
 
     @Override
-    public boolean isAvailable(CollectionModel collection, Integer quantity) {
+    public boolean isAvailable(Integer collectionId, Integer quantity) {
+        LOG.info("collection isAvailable started!");
+        List<CollectionModel> collections;
+
+        try {
+            collections = entityManager. createQuery("select c from CollectionModel c" +
+                                                             " INNER JOIN c.collectionCopyList cp" +
+                                                             " WHERE cp.collectionCopySituation = :collectionCopySituation " +
+                                                             " AND c.id = :collectionId").
+                                                             setParameter("collectionCopySituation", CollectionCopyModel.CollectionCopySituation.Disponível).
+                                                             setParameter("collectionId", collectionId).
+                                                             getResultList();
+            LOG.info("Collections found!");
+
+            if (collections.size() >= quantity)
+                return true;
+
+        } catch (NoResultException e) {
+            collections = null;
+        }
         return false;
     }
 }

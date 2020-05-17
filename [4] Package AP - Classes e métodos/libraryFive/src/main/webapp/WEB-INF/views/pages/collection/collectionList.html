@@ -48,8 +48,8 @@
         });
 
         $(document).ready(function () {
-            $('body').on('click', '.collection_id',function(){
-                document.getElementById("collection_id").value = $(this).attr('data');
+            $('body').on('click', '.collectionId',function(){
+                document.getElementById("collectionId").value = $(this).attr('data');
                 console.log($(this).attr('data-id'));
             });
         });
@@ -133,7 +133,7 @@
                 <td><span th:text="${collection.publicationYear}"></span></td>
                 <td><span th:text="${collection.type}"></span></td>
                 <td>
-                    <a href="#addNewLoan" class="btn btn-success collection_id" data-toggle="modal" th:data="${collection.title}"><i class="material-icons custom-color-add-button" data-toggle="tooltip" title="Novo empréstimo">&#xE147; </i>Empréstimo</a>
+                    <a href="#addNewLoan" class="btn btn-success collectionId" data-toggle="modal" th:data="${collection.id}"><i class="material-icons custom-color-add-button" data-toggle="tooltip" title="Novo empréstimo">&#xE147; </i>Empréstimo</a>
                 </td>
             </tr>
             </tbody>
@@ -168,7 +168,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <input id="collection_id" name="collection_id" type="hidden" value="" />
+                    <input id="collectionId" name="collectionId" type="hidden" value="" />
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
                     <input type="submit" class="btn btn-info" value="Salvar">
                 </div>

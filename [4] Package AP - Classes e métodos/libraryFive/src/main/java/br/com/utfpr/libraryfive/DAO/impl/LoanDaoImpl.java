@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository("loanDao")
@@ -23,13 +22,37 @@ public class LoanDaoImpl implements LoanDao {
     private EntityManager entityManager;
 
     @Override
-    public void makeLoan(LocalDateTime actualDate, LocalDateTime dateToReturn, String collectionTitle, Integer quantity) {
+    public void makeLoan(LoanModel loan) {
+        entityManager.persist(loan);
+    }
 
+    @Override
+    public void deleteLoan(LoanModel loan) {
+        LOG.info("deleteLoan started!");
+        try {
+            entityManager.remove(loan);
+            LOG.info("Loan success deleted!");
+        } catch (NoResultException e) {
+            LOG.info("Loan delete fail, because " + e.getMessage());
+        }
     }
 
     @Override
     public LoanModel findById(Integer id) {
-        return null;
+        LOG.info("findById started!");
+
+        List<LoanModel> loans = entityManager.createQuery("select a from LoanModel a where a.id = :id", LoanModel.class)
+                .setParameter("id", id)
+                .getResultList();
+
+        if (loans.isEmpty()) {
+            LOG.info("The loan " + id + " doesn't exist!");
+
+            return null;
+        }
+
+        LOG.info("Success! Loan with id " + loans.get(0).getId() + " found!");
+        return loans.get(0);
     }
 
     @Override
@@ -54,7 +77,7 @@ public class LoanDaoImpl implements LoanDao {
         try {
             loans = entityManager. createQuery("select l from LoanModel l" +
                     " INNER JOIN l.user u" +
-                    " WHERE u.email = :email").
+                    " WHERE u.email = :email AND l.returnModel.size = 0").
                     setParameter("email", userEmail).
                     getResultList();
             LOG.info("Loans found!");

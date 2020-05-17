@@ -90,8 +90,8 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public boolean isAvailable(CollectionModel collection, Integer quantity) {
-        return collectionDao.isAvailable(collection, quantity);
+    public boolean isAvailable(Integer collectionId, Integer quantity) {
+        return collectionDao.isAvailable(collectionId, quantity);
     }
 
     @Override

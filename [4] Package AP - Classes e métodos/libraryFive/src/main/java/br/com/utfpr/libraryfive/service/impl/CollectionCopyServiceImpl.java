@@ -51,12 +51,6 @@ public class CollectionCopyServiceImpl implements CollectionCopyService {
     }
 
     @Override
-    public String findCollectionCopyByCollectionTitle(String collectionTitle) {
-        collectionCopyDao.findCollectionCopyByCollectionTitle(collectionTitle);
-        return collectionTitle;
-    }
-
-    @Override
     public CollectionCopyModel findById(Integer id) {
         return collectionCopyDao.findById(id);
     }
@@ -79,6 +73,13 @@ public class CollectionCopyServiceImpl implements CollectionCopyService {
             collectionCopyModel.setCollectionCopySituation(getCollectionCopySituation(request.getParameter("collectionCopySituation")));
         }
         return collectionCopyModel;
+    }
+
+
+    @Override
+    public void editCollectionCopySituation(CollectionCopyModel collectionCopy, String situation) {
+        collectionCopy.setCollectionCopySituation(getCollectionCopySituation(situation));
+        editCollectionCopy(collectionCopy);
     }
 
     private CollectionCopyModel.CollectionCopySituation getCollectionCopySituation(String parameter) {

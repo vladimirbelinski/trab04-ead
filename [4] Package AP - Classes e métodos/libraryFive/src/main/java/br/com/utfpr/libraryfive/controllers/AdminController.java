@@ -102,18 +102,13 @@ public class AdminController {
 
         List<LoanModel> allLoans = loanService.listAll();
 
-        if (!allLoans.isEmpty()) {
+        modelAndView.setViewName("loan/adminLoan");
+        modelAndView.addObject("loans", allLoans);
+        modelAndView.addObject("userName", session.getCurrentUser().getName());
 
-            modelAndView.setViewName("loan/adminLoan");
-            modelAndView.addObject("loans", allLoans);
-            modelAndView.addObject("userName", session.getCurrentUser().getName());
+        LOG.info("Loans success retrieved!");
 
-            LOG.info("Loans success retrieved!");
-
-            return modelAndView;
-        }
-        // retorna erro
-        return null;
+        return modelAndView;
     }
 
     @RequestMapping(value = {"/manage/users"}, method = RequestMethod.GET)

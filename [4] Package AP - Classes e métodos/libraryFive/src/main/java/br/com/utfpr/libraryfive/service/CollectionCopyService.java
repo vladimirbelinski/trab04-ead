@@ -18,7 +18,7 @@ public interface CollectionCopyService {
 
     CollectionCopyModel findById(Integer id);
 
-    String findCollectionCopyByCollectionTitle(String collectionTitle);
-
     CollectionCopyModel getCollectionCopyByRegisterForm(HttpServletRequest request, Boolean isNewCollectionCopy);
+
+    void editCollectionCopySituation(CollectionCopyModel collectionCopy, String situation);
 }

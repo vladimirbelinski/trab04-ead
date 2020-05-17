@@ -1,9 +1,14 @@
 package br.com.utfpr.libraryfive.service.impl;
 
 import br.com.utfpr.libraryfive.DAO.LoanDao;
+import br.com.utfpr.libraryfive.model.CollectionCopyModel;
+import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.model.LoanModel;
+import br.com.utfpr.libraryfive.model.UserModel;
 import br.com.utfpr.libraryfive.service.CollectionCopyService;
+import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.service.LoanService;
+import br.com.utfpr.libraryfive.service.UserService;
 import br.com.utfpr.libraryfive.util.DateUtils;
 import br.com.utfpr.libraryfive.util.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,31 +32,44 @@ public class LoanServiceImpl implements LoanService {
     private LoanDao loanDao;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
+    CollectionService collectionService;
+
+    @Autowired
     private CollectionCopyService collectionCopyService;
 
     @Override
-    public void makeLoan(String collectionTitle, Integer quantity) {
+    public void makeLoan(Integer collectionId, Integer quantity) {
 
         // ID_USUARIO
-        session.getCurrentUser().getId();
+        UserModel user = userService.findById(session.getCurrentUser().getId());
 
         // ID_EMPRESTIMO - gerado automaticamente
 
         // ID_EXEMPLAR
-        String collectionCopy = collectionCopyService.findCollectionCopyByCollectionTitle(collectionTitle);
-        if (!collectionCopy.isEmpty()) {
+        CollectionCopyModel collectionCopy = collectionService.findById(collectionId).getCollectionCopyList().stream().filter(i -> i.getCollectionCopySituation().equals(CollectionCopyModel.CollectionCopySituation.Disponível)).findFirst().get();
+        if (collectionCopy != null) {
 
             LocalDateTime actualDate = dateUtils.getActualDate();
             LocalDateTime dateToReturn = dateUtils.calculateDateToReturn(7); // Por padrão, o cliente poderá ficar com o livro apenas 7 dias
 
-            loanDao.makeLoan(actualDate, dateToReturn,collectionTitle, quantity);
+            LoanModel loanModel = new LoanModel();
+            loanModel.setUser(user);
+            loanModel.setCollectionCopy(collectionCopy);
+            loanModel.setLoanDate(dateUtils.convertLocalDateTimeToDate(actualDate));
+            loanModel.setExpectedReturnDate(dateUtils.convertLocalDateTimeToDate(dateToReturn));
+
+            loanDao.makeLoan(loanModel);
+            collectionCopyService.editCollectionCopySituation(collectionCopy, "Emprestado");
         }
         // retorna erro
     }
 
     @Override
     public LoanModel findById(Integer id) {
-        return null;
+        return loanDao.findById(id);
     }
 
     @Override

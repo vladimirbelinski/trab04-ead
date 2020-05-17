@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Component
@@ -46,5 +47,9 @@ public class DateUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Date convertLocalDateTimeToDate(LocalDateTime date) {
+        return Date.from(date.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

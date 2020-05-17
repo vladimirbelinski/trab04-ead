@@ -29,7 +29,7 @@ public interface CollectionService {
 
     List<CollectionModel> showCollectionInfo();
 
-    boolean isAvailable(CollectionModel collection, Integer quantity);
+    boolean isAvailable(Integer collectionId, Integer quantity);
 
     CollectionModel getCollectionByRegisterForm(HttpServletRequest request, Boolean isNewCollection);
 }
