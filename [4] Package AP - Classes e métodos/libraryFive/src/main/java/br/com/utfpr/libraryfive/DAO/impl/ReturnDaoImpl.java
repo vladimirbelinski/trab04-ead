@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository("returnDao")
 @Transactional
@@ -22,5 +24,23 @@ public class ReturnDaoImpl implements ReturnDao {
     @Override
     public void makeReturn(ReturnModel returnModel) {
         entityManager.persist(returnModel);
+    }
+
+    @Override
+    public List<ReturnModel> findAllReturnedLoansByEmail(String userEmail) {
+        LOG.info("findAll returned loans ByEmail started!");
+        List<ReturnModel> returnedLoans;
+
+        try {
+            returnedLoans = entityManager. createQuery("select l from ReturnModel l" +
+                    " INNER JOIN l.loan.user u" +
+                    " WHERE u.email = :email").
+                    setParameter("email", userEmail).
+                    getResultList();
+            LOG.info("Returned loans found!");
+        } catch (NoResultException e) {
+            returnedLoans = null;
+        }
+        return returnedLoans;
     }
 }

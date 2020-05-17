@@ -3,6 +3,7 @@ package br.com.utfpr.libraryfive.controllers;
 import br.com.utfpr.libraryfive.model.CollectionCopyModel;
 import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.model.LoanModel;
+import br.com.utfpr.libraryfive.model.ReturnModel;
 import br.com.utfpr.libraryfive.service.CollectionCopyService;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.service.LoanService;
@@ -77,5 +78,18 @@ public class LoanController extends AbstractController {
         returnService.makeReturn(loan);
 
         return REDIRECT_TO_MY_LOANS;
+    }
+
+    @RequestMapping(value = "/myhistory", method = RequestMethod.GET)
+    public ModelAndView myHistoryLoans() {
+
+        List<ReturnModel> returnedLoans = returnService.findAllReturnedLoansByEmail(session.getCurrentUser().getEmail());
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("loan/loanHistory");
+        modelAndView.addObject("returnedLoans", returnedLoans);
+        modelAndView.addObject("userName", session.getCurrentUser().getName());
+
+        return modelAndView;
     }
 }

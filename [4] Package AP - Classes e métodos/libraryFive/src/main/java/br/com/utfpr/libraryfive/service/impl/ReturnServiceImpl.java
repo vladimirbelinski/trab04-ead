@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service("returnService")
 @Transactional
 public class ReturnServiceImpl implements ReturnService {
@@ -32,5 +34,10 @@ public class ReturnServiceImpl implements ReturnService {
 
         returnDao.makeReturn(returnModel);
         collectionCopyService.editCollectionCopySituation(loan.getCollectionCopy(), "Disponível");
+    }
+
+    @Override
+    public List<ReturnModel> findAllReturnedLoansByEmail(String userEmail) {
+        return returnDao.findAllReturnedLoansByEmail(userEmail);
     }
 }
