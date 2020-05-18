@@ -2,7 +2,6 @@ package br.com.utfpr.libraryfive.DAO;
 
 import br.com.utfpr.libraryfive.model.LoanModel;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface LoanDao {
@@ -17,5 +16,5 @@ public interface LoanDao {
 
     List<LoanModel> listAllByEmail(String userEmail);
 
-    void renewLoan();
+    void renewLoan(LoanModel loanModel);
 }

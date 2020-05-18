@@ -92,4 +92,17 @@ public class LoanController extends AbstractController {
 
         return modelAndView;
     }
+
+    @RequestMapping(value = "/renew", method = RequestMethod.GET)
+    public String renewLoan(@RequestParam("id") final int id) {
+
+        LoanModel loan = loanService.findById(id);
+        if (loan != null) {
+            loanService.renewLoan(loan);
+
+            return REDIRECT_TO_MY_LOANS;
+        }
+        // error
+        return null;
+    }
 }

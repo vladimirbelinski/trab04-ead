@@ -36,6 +36,16 @@
             });
         });
 
+        // Renew loan
+        $(document).ready(function () {
+            $('.table .renewBtn').on('click', function (event) {
+                event.preventDefault();
+                var href = $(this).attr('href');
+                $('#renewLoanModal #renewRef').attr('href', href);
+                $('#renewLoanModal').modal();
+            });
+        });
+
     </script>
 </head>
 <body>
@@ -115,7 +125,7 @@
                     <span th:if="${loan.expectedReturnDate.after(#dates.createNow())}"><span class="status text-success">&bull;</span> Em dia</span>
                 </td>
                 <td>
-                    <a href="#" class="settings" title="Renovar" data-toggle="tooltip"><i class="material-icons">&#xe863</i></a>
+                    <a th:href="@{__${baseUrl}__/loan/renew/(id=${loan.id})}" class="settings renewBtn" title="Renovar" data-toggle="tooltip"><i class="material-icons">&#xe863</i></a>
                     <a th:href="@{__${baseUrl}__/loan/return/(id=${loan.id})}" class="delete returnBtn" title="Devolver" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
                 </td>
             </tr>
@@ -156,5 +166,26 @@
         </div>
     </div>
 </div>
+
+<!-- Renew loan Modal HTML -->
+<div id="renewLoanModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Renovar empréstimo</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Você tem certeza que quer renovar?</p>
+                <p class="text-warning"><small>Esta ação não poderá ser desfeita.</small></p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                <a href="" class="btn btn-danger" id="renewRef">Renovar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

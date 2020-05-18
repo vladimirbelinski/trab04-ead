@@ -15,7 +15,7 @@ public interface LoanService {
 
     List<LoanModel> listAllByEmail(String userEmail);
 
-    void renewLoan();
+    void renewLoan(LoanModel loanModel);
 
-    Boolean isLoanLate(LocalDateTime expectedReturnDate);
+    Boolean isLoanLate(LoanModel loanModel);
 }

@@ -88,7 +88,7 @@ public class LoanDaoImpl implements LoanDao {
     }
 
     @Override
-    public void renewLoan() {
-
+    public void renewLoan(LoanModel loanModel) {
+        entityManager.merge(loanModel);
     }
 }

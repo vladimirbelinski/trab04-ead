@@ -2,7 +2,6 @@ package br.com.utfpr.libraryfive.service.impl;
 
 import br.com.utfpr.libraryfive.DAO.LoanDao;
 import br.com.utfpr.libraryfive.model.CollectionCopyModel;
-import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.model.LoanModel;
 import br.com.utfpr.libraryfive.model.UserModel;
 import br.com.utfpr.libraryfive.service.CollectionCopyService;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service("loanService")
@@ -83,12 +83,24 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public void renewLoan() {
+    public void renewLoan(LoanModel loanModel) {
 
+        /* TODO:
+        1 - Check if has reservations for the collection requested */
+
+        if (!isLoanLate(loanModel)) {
+            LocalDateTime newDateToReturn = dateUtils.calculateDateToReturn(7);
+
+            loanModel.setExpectedReturnDate(dateUtils.convertLocalDateTimeToDate(newDateToReturn));
+
+            loanDao.renewLoan(loanModel);
+        } else {
+            // error
+        }
     }
 
     @Override
-    public Boolean isLoanLate(LocalDateTime expectedReturnDate) {
-        return dateUtils.getActualDate().isAfter(expectedReturnDate);
+    public Boolean isLoanLate(LoanModel loanModel) {
+        return dateUtils.getActualDate().isAfter(dateUtils.convertDate(loanModel.getExpectedReturnDate().toString()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
 }
