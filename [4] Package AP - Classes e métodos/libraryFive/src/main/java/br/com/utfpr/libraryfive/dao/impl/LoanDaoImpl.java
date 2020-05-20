@@ -1,6 +1,6 @@
-package br.com.utfpr.libraryfive.DAO.impl;
+package br.com.utfpr.libraryfive.dao.impl;
 
-import br.com.utfpr.libraryfive.DAO.LoanDao;
+import br.com.utfpr.libraryfive.dao.LoanDao;
 import br.com.utfpr.libraryfive.model.LoanModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository("loanDao")
@@ -27,17 +28,6 @@ public class LoanDaoImpl implements LoanDao {
     }
 
     @Override
-    public void deleteLoan(LoanModel loan) {
-        LOG.info("deleteLoan started!");
-        try {
-            entityManager.remove(loan);
-            LOG.info("Loan success deleted!");
-        } catch (NoResultException e) {
-            LOG.info("Loan delete fail, because " + e.getMessage());
-        }
-    }
-
-    @Override
     public LoanModel findById(Integer id) {
         LOG.info("findById started!");
 
@@ -48,11 +38,11 @@ public class LoanDaoImpl implements LoanDao {
         if (loans.isEmpty()) {
             LOG.info("The loan " + id + " doesn't exist!");
 
-            return null;
+            return new LoanModel();
         }
 
-        LOG.info("Success! Loan with id " + loans.get(0).getId() + " found!");
-        return loans.get(0);
+        LOG.info("Success! Loan with id " + loans.stream().findFirst().get().getId() + " found in database!");
+        return loans.stream().findFirst().orElse(null);
     }
 
     @Override
@@ -62,9 +52,9 @@ public class LoanDaoImpl implements LoanDao {
 
         try {
             loans = entityManager. createQuery("select l from LoanModel l", LoanModel.class).getResultList();
-            LOG.info("Loans found!");
+            LOG.info("Loans found in database!");
         } catch (NoResultException e) {
-            loans = null;
+            loans = Arrays.asList();
         }
         return loans;
     }
@@ -76,13 +66,14 @@ public class LoanDaoImpl implements LoanDao {
 
         try {
             loans = entityManager. createQuery("select l from LoanModel l" +
-                    " INNER JOIN l.user u" +
-                    " WHERE u.email = :email AND l.returnModel.size = 0").
-                    setParameter("email", userEmail).
-                    getResultList();
-            LOG.info("Loans found!");
+                                                       " INNER JOIN l.user u" +
+                                                       " WHERE u.email = :email AND l.returnModel.size = :size").
+                                                       setParameter("email", userEmail).
+                                                       setParameter("size", 0).
+                                                       getResultList();
+            LOG.info("Loans found in database!");
         } catch (NoResultException e) {
-            loans = null;
+            loans = Arrays.asList();
         }
         return loans;
     }

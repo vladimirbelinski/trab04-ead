@@ -2,7 +2,6 @@ package br.com.utfpr.libraryfive.service;
 
 import br.com.utfpr.libraryfive.model.LoanModel;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface LoanService {

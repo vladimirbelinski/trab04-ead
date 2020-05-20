@@ -1,4 +1,4 @@
-package br.com.utfpr.libraryfive.DAO;
+package br.com.utfpr.libraryfive.dao;
 
 import br.com.utfpr.libraryfive.model.LoanModel;
 
@@ -7,8 +7,6 @@ import java.util.List;
 public interface LoanDao {
 
     void makeLoan(LoanModel loan);
-
-    void deleteLoan(LoanModel loan);
 
     LoanModel findById(Integer id);
 

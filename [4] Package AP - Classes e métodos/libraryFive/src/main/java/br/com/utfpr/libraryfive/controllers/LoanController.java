@@ -1,16 +1,15 @@
 package br.com.utfpr.libraryfive.controllers;
 
-import br.com.utfpr.libraryfive.model.CollectionCopyModel;
-import br.com.utfpr.libraryfive.model.CollectionModel;
 import br.com.utfpr.libraryfive.model.LoanModel;
 import br.com.utfpr.libraryfive.model.ReturnModel;
-import br.com.utfpr.libraryfive.service.CollectionCopyService;
+import br.com.utfpr.libraryfive.model.UserModel;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.service.LoanService;
 import br.com.utfpr.libraryfive.service.ReturnService;
-import br.com.utfpr.libraryfive.util.DateUtils;
 import br.com.utfpr.libraryfive.util.FormatUtils;
 import br.com.utfpr.libraryfive.util.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +25,8 @@ import java.util.List;
 @RequestMapping("/loan")
 public class LoanController extends AbstractController {
 
+    static final Logger LOG = LoggerFactory.getLogger(LoanController.class);
+
     @Autowired
     private Session session;
 
@@ -39,34 +40,33 @@ public class LoanController extends AbstractController {
     private CollectionService collectionService;
 
     @Autowired
-    private CollectionCopyService collectionCopyService;
-
-    @Autowired
     private ReturnService returnService;
 
     @RequestMapping(value = {"/new"}, method = RequestMethod.POST)
-    public String newLoan(HttpServletRequest request, ModelAndView modelAndView) {
+    public String newLoan(HttpServletRequest request) {
 
         Integer collectionId = formatUtils.getIntegerValue(request.getParameter("collectionId"));
         Integer collectionQty = formatUtils.getIntegerValue(request.getParameter("quantity"));
 
         if (collectionId != null && collectionService.isAvailable(collectionId, collectionQty))
-            // fazer o empréstimo
             loanService.makeLoan(collectionId, collectionQty);
+
+        LOG.info("Loan has been created!");
 
         return REDIRECT_TO_MY_LOANS;
     }
 
     @RequestMapping(value = "/myloans", method = RequestMethod.GET)
-    public ModelAndView showMyLoans(HttpServletRequest request) {
+    public ModelAndView showMyLoans(HttpServletRequest request, ModelAndView modelAndView) {
 
         List<LoanModel> loans = loanService.listAllByEmail(session.getCurrentUser().getEmail());
 
-        ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("loan/userLoan");
         modelAndView.addObject("loans", loans);
         modelAndView.addObject("userName", session.getCurrentUser().getName());
         modelAndView.addObject("baseUrl", session.getBaseUrl(request));
+
+        LOG.info("My loans successfully retrieved!");
 
         return modelAndView;
     }
@@ -77,18 +77,23 @@ public class LoanController extends AbstractController {
         LoanModel loan = loanService.findById(id);
         returnService.makeReturn(loan);
 
+        LOG.info("Return has been created!");
+
         return REDIRECT_TO_MY_LOANS;
     }
 
     @RequestMapping(value = "/myhistory", method = RequestMethod.GET)
-    public ModelAndView myHistoryLoans() {
+    public ModelAndView myHistoryLoans(ModelAndView modelAndView) {
 
-        List<ReturnModel> returnedLoans = returnService.findAllReturnedLoansByEmail(session.getCurrentUser().getEmail());
+        UserModel currentUser = session.getCurrentUser();
 
-        ModelAndView modelAndView = new ModelAndView();
+        List<ReturnModel> returnedLoans = returnService.findAllReturnedLoansByEmail(currentUser.getEmail());
+
         modelAndView.setViewName("loan/loanHistory");
         modelAndView.addObject("returnedLoans", returnedLoans);
-        modelAndView.addObject("userName", session.getCurrentUser().getName());
+        modelAndView.addObject("userName", currentUser.getName());
+
+        LOG.info("My history (loans) successfully retrieved!");
 
         return modelAndView;
     }
@@ -99,6 +104,8 @@ public class LoanController extends AbstractController {
         LoanModel loan = loanService.findById(id);
         if (loan != null) {
             loanService.renewLoan(loan);
+
+            LOG.info("Loan renewal successfully created!");
 
             return REDIRECT_TO_MY_LOANS;
         }

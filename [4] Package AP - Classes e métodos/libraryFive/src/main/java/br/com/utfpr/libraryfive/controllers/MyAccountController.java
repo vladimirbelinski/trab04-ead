@@ -31,11 +31,11 @@ public class MyAccountController {
     private ReturnService returnService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView showMyAccountDetails() {
+    public ModelAndView showMyAccountDetails(ModelAndView modelAndView) {
 
         UserModel user = session.getCurrentUser();
 
-        List<ReturnModel> returnedLoans = returnService.findAllReturnedLoansByEmail(session.getCurrentUser().getEmail());
+        List<ReturnModel> returnedLoans = returnService.findAllReturnedLoansByEmail(user.getEmail());
         List<LoanModel> activeLoans = loanService.listAllByEmail(user.getEmail());
         List<LoanModel> overdueLoans = new ArrayList<>();
 
@@ -45,7 +45,7 @@ public class MyAccountController {
             }
         }
 
-        ModelAndView modelAndView = new ModelAndView("user/myAccount");
+        modelAndView.setViewName("user/myAccount");
         modelAndView.addObject("user", user);
         modelAndView.addObject("allLoans", returnedLoans.size() + activeLoans.size());
         modelAndView.addObject("activeLoans", activeLoans.size());

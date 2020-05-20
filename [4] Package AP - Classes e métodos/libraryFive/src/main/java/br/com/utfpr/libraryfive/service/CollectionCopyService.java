@@ -21,4 +21,6 @@ public interface CollectionCopyService {
     CollectionCopyModel getCollectionCopyByRegisterForm(HttpServletRequest request, Boolean isNewCollectionCopy);
 
     void editCollectionCopySituation(CollectionCopyModel collectionCopy, String situation);
+
+    CollectionCopyModel.CollectionCopySituation getCollectionCopySituation(String parameter);
 }

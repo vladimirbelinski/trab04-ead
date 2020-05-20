@@ -1,9 +1,10 @@
 package br.com.utfpr.libraryfive.service.impl;
 
-import br.com.utfpr.libraryfive.DAO.LoanDao;
+import br.com.utfpr.libraryfive.dao.LoanDao;
 import br.com.utfpr.libraryfive.model.CollectionCopyModel;
 import br.com.utfpr.libraryfive.model.LoanModel;
 import br.com.utfpr.libraryfive.model.UserModel;
+import br.com.utfpr.libraryfive.populators.LoanPopulator;
 import br.com.utfpr.libraryfive.service.CollectionCopyService;
 import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.service.LoanService;
@@ -32,10 +33,13 @@ public class LoanServiceImpl implements LoanService {
     private LoanDao loanDao;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    CollectionService collectionService;
+    private CollectionService collectionService;
+
+    @Autowired
+    private LoanPopulator loanPopulator;
 
     @Autowired
     private CollectionCopyService collectionCopyService;
@@ -46,23 +50,14 @@ public class LoanServiceImpl implements LoanService {
         // ID_USUARIO
         UserModel user = userService.findById(session.getCurrentUser().getId());
 
-        // ID_EMPRESTIMO - gerado automaticamente
-
         // ID_EXEMPLAR
         CollectionCopyModel collectionCopy = collectionService.findById(collectionId).getCollectionCopyList().stream().filter(i -> i.getCollectionCopySituation().equals(CollectionCopyModel.CollectionCopySituation.Disponível)).findFirst().get();
         if (collectionCopy != null) {
 
-            LocalDateTime actualDate = dateUtils.getActualDate();
-            LocalDateTime dateToReturn = dateUtils.calculateDateToReturn(7); // Por padrão, o cliente poderá ficar com o livro apenas 7 dias
+            LoanModel loan = loanPopulator.populate(user, collectionCopy);
 
-            LoanModel loanModel = new LoanModel();
-            loanModel.setUser(user);
-            loanModel.setCollectionCopy(collectionCopy);
-            loanModel.setLoanDate(dateUtils.convertLocalDateTimeToDate(actualDate));
-            loanModel.setExpectedReturnDate(dateUtils.convertLocalDateTimeToDate(dateToReturn));
-
-            loanDao.makeLoan(loanModel);
-            collectionCopyService.editCollectionCopySituation(collectionCopy, "Emprestado");
+            loanDao.makeLoan(loan);
+            collectionCopyService.editCollectionCopySituation(collectionCopy, CollectionCopyModel.CollectionCopySituation.Emprestado.toString()); // TODO - TESTAR
         }
         // retorna erro
     }

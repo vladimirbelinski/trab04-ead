@@ -1,6 +1,6 @@
-package br.com.utfpr.libraryfive.DAO.impl;
+package br.com.utfpr.libraryfive.dao.impl;
 
-import br.com.utfpr.libraryfive.DAO.ReturnDao;
+import br.com.utfpr.libraryfive.dao.ReturnDao;
 import br.com.utfpr.libraryfive.model.ReturnModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository("returnDao")
@@ -28,18 +29,18 @@ public class ReturnDaoImpl implements ReturnDao {
 
     @Override
     public List<ReturnModel> findAllReturnedLoansByEmail(String userEmail) {
-        LOG.info("findAll returned loans ByEmail started!");
+        LOG.info("findAll returned loans by user email started!");
         List<ReturnModel> returnedLoans;
 
         try {
             returnedLoans = entityManager. createQuery("select l from ReturnModel l" +
-                    " INNER JOIN l.loan.user u" +
-                    " WHERE u.email = :email").
-                    setParameter("email", userEmail).
-                    getResultList();
-            LOG.info("Returned loans found!");
+                                                               " INNER JOIN l.loan.user u" +
+                                                               " WHERE u.email = :email").
+                                                               setParameter("email", userEmail).
+                                                               getResultList();
+            LOG.info("Returned loans found in database!");
         } catch (NoResultException e) {
-            returnedLoans = null;
+            returnedLoans = Arrays.asList();
         }
         return returnedLoans;
     }

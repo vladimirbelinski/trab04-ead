@@ -1,12 +1,10 @@
 package br.com.utfpr.libraryfive.service.impl;
 
-import br.com.utfpr.libraryfive.DAO.CollectionCopyDao;
+import br.com.utfpr.libraryfive.dao.CollectionCopyDao;
 import br.com.utfpr.libraryfive.model.CollectionCopyModel;
-import br.com.utfpr.libraryfive.model.CollectionModel;
+import br.com.utfpr.libraryfive.populators.CollectionCopyPopulator;
 import br.com.utfpr.libraryfive.service.CollectionCopyService;
-import br.com.utfpr.libraryfive.service.CollectionService;
 import br.com.utfpr.libraryfive.util.DateUtils;
-import br.com.utfpr.libraryfive.util.FormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,16 +17,13 @@ import java.util.List;
 public class CollectionCopyServiceImpl implements CollectionCopyService {
 
     @Autowired
-    private CollectionCopyDao collectionCopyDao;
-
-    @Autowired
-    private CollectionService collectionService;
-
-    @Autowired
     DateUtils dateUtils;
 
     @Autowired
-    private FormatUtils formatUtils;
+    private CollectionCopyDao collectionCopyDao;
+
+    @Autowired
+    CollectionCopyPopulator collectionCopyPopulator;
 
     @Override
     public void createCollectionCopy(CollectionCopyModel collectionCopy) {
@@ -57,24 +52,8 @@ public class CollectionCopyServiceImpl implements CollectionCopyService {
 
     @Override
     public CollectionCopyModel getCollectionCopyByRegisterForm(HttpServletRequest request, Boolean isNewCollectionCopy) {
-
-        CollectionCopyModel collectionCopyModel = new CollectionCopyModel();
-
-        if (isNewCollectionCopy) {
-            CollectionModel collection = collectionService.findById(formatUtils.getIntegerValue(request.getParameter("collectionId")));
-
-            collectionCopyModel.setCollection(collection);
-            collectionCopyModel.setAcquisitionDate(dateUtils.convertDate(request.getParameter("acquisitionDate")));
-            collectionCopyModel.setCollectionCopySituation(getCollectionCopySituation(request.getParameter("collectionCopySituation")));
-        } else {
-            collectionCopyModel = findById(formatUtils.getIntegerValue(request.getParameter("collectionCopyToEditId")));
-
-            collectionCopyModel.setAcquisitionDate(dateUtils.convertDate(request.getParameter("acquisitionDate")));
-            collectionCopyModel.setCollectionCopySituation(getCollectionCopySituation(request.getParameter("collectionCopySituation")));
-        }
-        return collectionCopyModel;
+        return collectionCopyPopulator.populate(request, isNewCollectionCopy);
     }
-
 
     @Override
     public void editCollectionCopySituation(CollectionCopyModel collectionCopy, String situation) {
@@ -82,7 +61,8 @@ public class CollectionCopyServiceImpl implements CollectionCopyService {
         editCollectionCopy(collectionCopy);
     }
 
-    private CollectionCopyModel.CollectionCopySituation getCollectionCopySituation(String parameter) {
+    @Override
+    public CollectionCopyModel.CollectionCopySituation getCollectionCopySituation(String parameter) {
 
         if (parameter.equals(CollectionCopyModel.CollectionCopySituation.Disponível.toString())) {
             return CollectionCopyModel.CollectionCopySituation.Disponível;

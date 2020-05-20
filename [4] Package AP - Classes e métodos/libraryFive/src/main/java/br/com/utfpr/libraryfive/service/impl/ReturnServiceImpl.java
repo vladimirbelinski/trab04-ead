@@ -1,11 +1,12 @@
 package br.com.utfpr.libraryfive.service.impl;
 
-import br.com.utfpr.libraryfive.DAO.ReturnDao;
+import br.com.utfpr.libraryfive.dao.ReturnDao;
+import br.com.utfpr.libraryfive.model.CollectionCopyModel;
 import br.com.utfpr.libraryfive.model.LoanModel;
 import br.com.utfpr.libraryfive.model.ReturnModel;
+import br.com.utfpr.libraryfive.populators.ReturnPopulator;
 import br.com.utfpr.libraryfive.service.CollectionCopyService;
 import br.com.utfpr.libraryfive.service.ReturnService;
-import br.com.utfpr.libraryfive.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,17 +24,14 @@ public class ReturnServiceImpl implements ReturnService {
     private CollectionCopyService collectionCopyService;
 
     @Autowired
-    private DateUtils dateUtils;
+    private ReturnPopulator returnPopulator;
 
     @Override
     public void makeReturn(LoanModel loan) {
-        ReturnModel returnModel = new ReturnModel();
-        returnModel.setLoan(loan);
-        returnModel.setReturnDate(dateUtils.convertLocalDateTimeToDate(dateUtils.getActualDate()));
-
+        ReturnModel returnModel = returnPopulator.populate(loan);
 
         returnDao.makeReturn(returnModel);
-        collectionCopyService.editCollectionCopySituation(loan.getCollectionCopy(), "Disponível");
+        collectionCopyService.editCollectionCopySituation(loan.getCollectionCopy(), CollectionCopyModel.CollectionCopySituation.Disponível.toString()); // TODO - Testar
     }
 
     @Override
