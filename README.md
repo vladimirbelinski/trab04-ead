@@ -19,7 +19,7 @@ Como sugestão estão relacionados abaixo cinco papéis para serem desempenhados
 
 O objetivo é implementar **(obs1)** uma aplicação para o seguinte sistema de empréstimos/devolução de livros em uma biblioteca:
 
-![Diagrama de classes](https://github.com/vladimirbelinski/trab04-ead/blob/master/%5B0%5D%20Documentos%20diversos%20e%20atas%20de%20reuni%C3%B5es/DiagramaDeClasses.JPG)
+![Diagrama de classes](https://github.com/vladimirbelinski/trab04-ead/blob/master/%5B0%5D%20Documentos%20diversos/DiagramaDeClasses.JPG)
 
 1 - É importante registrar a realização das tarefas, seja com participação em Fórum de Discussão ou Chat;
 
