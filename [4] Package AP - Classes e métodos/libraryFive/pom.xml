@@ -47,7 +47,7 @@
         <spring-data-jpa.version>1.8.2.RELEASE</spring-data-jpa.version>
 
         <!-- Persistence -->
-        <hibernate.version>4.3.6.Final</hibernate.version>
+        <hibernate.version>5.3.20.Final</hibernate.version>
         <hibernate-jpa-api>1.0.0.Final</hibernate-jpa-api>
         <mysql-connector-java.version>5.1.15</mysql-connector-java.version>
 
